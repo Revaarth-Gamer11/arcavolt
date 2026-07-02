@@ -7,7 +7,7 @@
 <body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
 <h1>⚡ Arcavolt Game Hub</h1>
-<p>Memory Game Update 🧠</p>
+<p>Fixed Memory Game 🧠 + Stable Build</p>
 
 <button onclick="showMenu()" style="padding:15px 25px; font-size:18px;">
 🎮 Open Game Menu
@@ -36,9 +36,8 @@ let current = "❌";
 function startTTT() {
     board = ["","","","","","","","",""];
     current = "❌";
-    renderTTT();
 
-    function renderTTT() {
+    function render() {
         let html = `<h2>Tic Tac Toe</h2>
         <div style="display:grid;grid-template-columns:repeat(3,80px);
         gap:5px;justify-content:center;">`;
@@ -47,7 +46,7 @@ function startTTT() {
             let color = board[i] === "❌" ? "red" : "blue";
 
             html += `
-            <div onclick="moveTTT(${i})"
+            <div onclick="move(${i})"
             style="width:80px;height:80px;background:#222;color:${color};
             display:flex;align-items:center;justify-content:center;
             font-size:30px;cursor:pointer;">
@@ -59,12 +58,12 @@ function startTTT() {
         document.getElementById("menu").innerHTML = html;
     }
 
-    window.moveTTT = function(i) {
+    window.move = function(i) {
         if (board[i] !== "") return;
 
         board[i] = current;
 
-        let wins = [
+        const wins = [
             [0,1,2],[3,4,5],[6,7,8],
             [0,3,6],[1,4,7],[2,5,8],
             [0,4,8],[2,4,6]
@@ -79,8 +78,10 @@ function startTTT() {
         }
 
         current = current === "❌" ? "⭕" : "❌";
-        renderTTT();
+        render();
     }
+
+    render();
 }
 
 /* ================= RPS ================= */
@@ -125,11 +126,8 @@ function startSnake() {
 
     document.getElementById("menu").innerHTML = `
         <h2>🐍 Snake Game</h2>
-        <p>Use arrow keys</p>
-
         <canvas id="game" width="300" height="300"
         style="background:#222;"></canvas>
-
         <br><button onclick="showMenu()">Back</button>
     `;
 
@@ -185,7 +183,7 @@ function drawSnake() {
     snake.forEach(s => ctx.fillRect(s.x*20, s.y*20, 20, 20));
 }
 
-/* ================= MEMORY GAME ================= */
+/* ================= MEMORY GAME FIXED ================= */
 function startMemory() {
     const emojis = ["🍎","🍌","🍇","🍓","🍍","🥝"];
     let cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
@@ -197,40 +195,40 @@ function startMemory() {
     <div style="display:grid;grid-template-columns:repeat(4,70px);
     gap:5px;justify-content:center;">`;
 
-    cards.forEach((c, i) => {
+    for (let i = 0; i < cards.length; i++) {
         html += `
         <div onclick="flip(${i})"
-        id="c${i}"
+        id="card${i}"
         style="width:70px;height:70px;background:#222;
         display:flex;align-items:center;justify-content:center;
         font-size:25px;cursor:pointer;">
         ❓
         </div>`;
-    });
+    }
 
-    html += `</div><br><button onclick="showMenu()">Back</button>`;
+    html += `<br><button onclick="showMenu()">Back</button>`;
     document.getElementById("menu").innerHTML = html;
 
     window.flip = function(i) {
         if (lock) return;
 
-        let el = document.getElementById("c"+i);
+        let el = document.getElementById("card"+i);
         if (el.innerHTML !== "❓") return;
 
         el.innerHTML = cards[i];
 
-        if (!first) {
+        if (first === null) {
             first = i;
         } else {
             lock = true;
 
             if (cards[first] !== cards[i]) {
                 setTimeout(() => {
-                    document.getElementById("c"+first).innerHTML = "❓";
-                    document.getElementById("c"+i).innerHTML = "❓";
+                    document.getElementById("card"+first).innerHTML = "❓";
+                    document.getElementById("card"+i).innerHTML = "❓";
                     first = null;
                     lock = false;
-                }, 800);
+                }, 700);
             } else {
                 first = null;
                 lock = false;
