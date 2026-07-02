@@ -7,9 +7,9 @@
 <body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
 <h1>⚡ Arcavolt Game Hub</h1>
-<p>Stable Full Replace Version (safe build)</p>
+<p>Fixed Version (Tic Tac Toe + RPS working)</p>
 
-<button onclick="showMenu()" style="padding:15px 25px; font-size:18px; cursor:pointer;">
+<button onclick="showMenu()" style="padding:15px 25px; font-size:18px;">
 🎮 Open Game Menu
 </button>
 
@@ -17,25 +17,26 @@
 
 <script>
 
-/* ================= MENU ================= */
+let board = [];
+let current = "❌";
+
+/* ---------------- MENU ---------------- */
 function showMenu() {
     document.getElementById("menu").innerHTML = `
-        <h2>🎯 Choose a Game</h2>
+        <h2>🎯 Games</h2>
 
         <button onclick="startTTT()">❌ Tic Tac Toe</button><br><br>
         <button onclick="startRPS()">✊ Rock Paper Scissors</button><br><br>
-
-        <p>🐍 Snake (coming in next update)</p>
-        <p>🧠 Memory Game (coming soon)</p>
     `;
 }
 
-/* ================= TIC TAC TOE ================= */
+/* ---------------- TIC TAC TOE FIXED ---------------- */
 function startTTT() {
-    let board = ["","","","","","","","",""];
-    let current = "❌";
+    board = ["","","","","","","","",""];
+    current = "❌";
+    render();
 
-    function draw() {
+    function render() {
         let html = `
         <h2>Tic Tac Toe</h2>
         <div style="display:grid;grid-template-columns:repeat(3,80px);
@@ -63,7 +64,7 @@ function startTTT() {
 
         board[i] = current;
 
-        const wins = [
+        let wins = [
             [0,1,2],[3,4,5],[6,7,8],
             [0,3,6],[1,4,7],[2,5,8],
             [0,4,8],[2,4,6]
@@ -78,13 +79,11 @@ function startTTT() {
         }
 
         current = current === "❌" ? "⭕" : "❌";
-        draw();
+        render();
     }
-
-    draw();
 }
 
-/* ================= ROCK PAPER SCISSORS ================= */
+/* ---------------- RPS WORKING ---------------- */
 function startRPS() {
     document.getElementById("menu").innerHTML = `
         <h2>✊ Rock Paper Scissors</h2>
