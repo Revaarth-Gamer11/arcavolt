@@ -7,7 +7,7 @@
 <body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
 <h1>⚡ Arcavolt Game Hub</h1>
-<p>Fixed Version (Tic Tac Toe + RPS working)</p>
+<p>Stable Build + Snake Added 🐍</p>
 
 <button onclick="showMenu()" style="padding:15px 25px; font-size:18px;">
 🎮 Open Game Menu
@@ -20,25 +20,25 @@
 let board = [];
 let current = "❌";
 
-/* ---------------- MENU ---------------- */
+/* ================= MENU ================= */
 function showMenu() {
     document.getElementById("menu").innerHTML = `
         <h2>🎯 Games</h2>
 
         <button onclick="startTTT()">❌ Tic Tac Toe</button><br><br>
         <button onclick="startRPS()">✊ Rock Paper Scissors</button><br><br>
+        <button onclick="startSnake()">🐍 Snake</button><br><br>
     `;
 }
 
-/* ---------------- TIC TAC TOE FIXED ---------------- */
+/* ================= TIC TAC TOE ================= */
 function startTTT() {
     board = ["","","","","","","","",""];
     current = "❌";
     render();
 
     function render() {
-        let html = `
-        <h2>Tic Tac Toe</h2>
+        let html = `<h2>Tic Tac Toe</h2>
         <div style="display:grid;grid-template-columns:repeat(3,80px);
         gap:5px;justify-content:center;">`;
 
@@ -83,7 +83,7 @@ function startTTT() {
     }
 }
 
-/* ---------------- RPS WORKING ---------------- */
+/* ================= RPS ================= */
 function startRPS() {
     document.getElementById("menu").innerHTML = `
         <h2>✊ Rock Paper Scissors</h2>
@@ -113,6 +113,76 @@ function play(choice) {
 
     document.getElementById("result").innerHTML =
         `You: ${choice} | AI: ${ai} → ${result}`;
+}
+
+/* ================= SNAKE GAME ================= */
+let snake, dir, food, game;
+
+function startSnake() {
+    snake = [{x:5,y:5}];
+    dir = "right";
+    food = {x:10,y:10};
+
+    document.getElementById("menu").innerHTML = `
+        <h2>🐍 Snake Game</h2>
+        <p>Use arrow keys</p>
+
+        <canvas id="c" width="300" height="300"
+        style="background:#222;"></canvas>
+
+        <br><button onclick="showMenu()">Back</button>
+    `;
+
+    document.addEventListener("keydown", changeDir);
+
+    clearInterval(game);
+    game = setInterval(update, 200);
+}
+
+function changeDir(e) {
+    if (e.key === "ArrowUp") dir = "up";
+    if (e.key === "ArrowDown") dir = "down";
+    if (e.key === "ArrowLeft") dir = "left";
+    if (e.key === "ArrowRight") dir = "right";
+}
+
+function update() {
+    let head = {...snake[0]};
+
+    if (dir === "right") head.x++;
+    if (dir === "left") head.x--;
+    if (dir === "up") head.y--;
+    if (dir === "down") head.y++;
+
+    if (head.x < 0 || head.y < 0 || head.x > 14 || head.y > 14) {
+        clearInterval(game);
+        alert("Game Over");
+        showMenu();
+        return;
+    }
+
+    snake.unshift(head);
+
+    if (head.x === food.x && head.y === food.y) {
+        food = {x:Math.floor(Math.random()*15), y:Math.floor(Math.random()*15)};
+    } else {
+        snake.pop();
+    }
+
+    draw();
+}
+
+function draw() {
+    let c = document.getElementById("c");
+    let ctx = c.getContext("2d");
+
+    ctx.clearRect(0,0,300,300);
+
+    ctx.fillStyle = "red";
+    ctx.fillRect(food.x*20, food.y*20, 20, 20);
+
+    ctx.fillStyle = "lime";
+    snake.forEach(s => ctx.fillRect(s.x*20, s.y*20, 20, 20));
 }
 
 </script>
