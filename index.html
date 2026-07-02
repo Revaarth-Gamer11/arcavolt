@@ -7,7 +7,7 @@
 <body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
 <h1>⚡ Arcavolt Game Hub</h1>
-<p>Stable Build + Snake Added 🐍</p>
+<p>Snake Update Added 🐍</p>
 
 <button onclick="showMenu()" style="padding:15px 25px; font-size:18px;">
 🎮 Open Game Menu
@@ -16,9 +16,6 @@
 <div id="menu" style="margin-top:30px;"></div>
 
 <script>
-
-let board = [];
-let current = "❌";
 
 /* ================= MENU ================= */
 function showMenu() {
@@ -32,6 +29,9 @@ function showMenu() {
 }
 
 /* ================= TIC TAC TOE ================= */
+let board = [];
+let current = "❌";
+
 function startTTT() {
     board = ["","","","","","","","",""];
     current = "❌";
@@ -55,7 +55,6 @@ function startTTT() {
         }
 
         html += `</div><br><button onclick="showMenu()">Back</button>`;
-
         document.getElementById("menu").innerHTML = html;
     }
 
@@ -115,7 +114,7 @@ function play(choice) {
         `You: ${choice} | AI: ${ai} → ${result}`;
 }
 
-/* ================= SNAKE GAME ================= */
+/* ================= SNAKE ================= */
 let snake, dir, food, game;
 
 function startSnake() {
@@ -125,9 +124,9 @@ function startSnake() {
 
     document.getElementById("menu").innerHTML = `
         <h2>🐍 Snake Game</h2>
-        <p>Use arrow keys</p>
+        <p>Use arrow keys ⬆️⬇️⬅️➡️</p>
 
-        <canvas id="c" width="300" height="300"
+        <canvas id="game" width="300" height="300"
         style="background:#222;"></canvas>
 
         <br><button onclick="showMenu()">Back</button>
@@ -156,7 +155,7 @@ function update() {
 
     if (head.x < 0 || head.y < 0 || head.x > 14 || head.y > 14) {
         clearInterval(game);
-        alert("Game Over");
+        alert("Game Over 💀");
         showMenu();
         return;
     }
@@ -173,7 +172,7 @@ function update() {
 }
 
 function draw() {
-    let c = document.getElementById("c");
+    let c = document.getElementById("game");
     let ctx = c.getContext("2d");
 
     ctx.clearRect(0,0,300,300);
