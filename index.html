@@ -7,38 +7,81 @@
 <body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
 <h1>⚡ Arcavolt Game Hub</h1>
-<p>Safe base version (stable + ready to build games)</p>
+<p>Stable Version (safe + working)</p>
 
-<button onclick="showMenu()"
-style="padding:15px 25px; font-size:18px; cursor:pointer;">
+<button onclick="showMenu()" style="padding:15px 25px; font-size:18px;">
 🎮 Open Game Menu
 </button>
 
 <div id="menu" style="margin-top:30px;"></div>
 
 <script>
+
+/* ---------------- MENU ---------------- */
 function showMenu() {
     document.getElementById("menu").innerHTML = `
-        <h2>🎯 Games Menu</h2>
+        <h2>🎯 Choose a Game</h2>
 
         <button onclick="startTTT()">❌ Tic Tac Toe</button><br><br>
         <button onclick="startRPS()">✊ Rock Paper Scissors</button><br><br>
-        <button onclick="startSnake()">🐍 Snake (safe version)</button><br><br>
 
-        <p style="margin-top:20px;">More games coming soon 🚀</p>
+        <p>More games coming soon 🚀</p>
     `;
 }
 
-/* ---------------- SAFE TIC TAC TOE PLACEHOLDER */
+/* ---------------- TIC TAC TOE ---------------- */
 function startTTT() {
-    document.getElementById("menu").innerHTML = `
-        <h2>❌ Tic Tac Toe</h2>
-        <p>Next step: we will rebuild this properly</p>
-        <button onclick="showMenu()">Back</button>
-    `;
+    let board = ["","","","","","","","",""];
+    let current = "❌";
+
+    function render() {
+        let html = `<h2>Tic Tac Toe</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,80px);
+        gap:5px;justify-content:center;">`;
+
+        for (let i = 0; i < 9; i++) {
+            let color = board[i] === "❌" ? "red" : "blue";
+
+            html += `<div onclick="move(${i})"
+            style="width:80px;height:80px;background:#222;color:${color};
+            display:flex;align-items:center;justify-content:center;
+            font-size:30px;cursor:pointer;">
+            ${board[i]}
+            </div>`;
+        }
+
+        html += `</div><br><button onclick="showMenu()">Back</button>`;
+
+        document.getElementById("menu").innerHTML = html;
+    }
+
+    window.move = function(i) {
+        if (board[i] !== "") return;
+
+        board[i] = current;
+
+        const wins = [
+            [0,1,2],[3,4,5],[6,7,8],
+            [0,3,6],[1,4,7],[2,5,8],
+            [0,4,8],[2,4,6]
+        ];
+
+        for (let w of wins) {
+            let [a,b,c] = w;
+            if (board[a] && board[a] === board[b] && board[b] === board[c]) {
+                setTimeout(() => alert(current + " Wins 🎉"), 100);
+                return;
+            }
+        }
+
+        current = current === "❌" ? "⭕" : "❌";
+        render();
+    }
+
+    render();
 }
 
-/* ---------------- SAFE RPS PLACEHOLDER */
+/* ---------------- ROCK PAPER SCISSORS ---------------- */
 function startRPS() {
     document.getElementById("menu").innerHTML = `
         <h2>✊ Rock Paper Scissors</h2>
@@ -70,14 +113,6 @@ function play(choice) {
         `You: ${choice} | AI: ${ai} → ${result}`;
 }
 
-/* ---------------- SAFE SNAKE PLACEHOLDER */
-function startSnake() {
-    document.getElementById("menu").innerHTML = `
-        <h2>🐍 Snake</h2>
-        <p>We will build real Snake next step (safe version first)</p>
-        <button onclick="showMenu()">Back</button>
-    `;
-}
 </script>
 
 </body>
