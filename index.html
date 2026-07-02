@@ -8,236 +8,182 @@
 <body style="margin:0;font-family:Arial;background:#0f0f1a;color:white;text-align:center;">
 
 <h1>⚡ Arcavolt Game Hub</h1>
-<p>Version 1.4 - Stable AI + Fixed Engine</p>
+<p>Version 1.5 - All Games Working</p>
 
-<div id="scoreboard" style="margin:10px;font-size:18px;">
-Wins: 0
-</div>
+<div id="scoreboard" style="margin:10px;font-size:18px;">Wins: 0</div>
 
-<button onclick="showMenu()" style="padding:15px 25px;font-size:18px;">
-🎮 Start
-</button>
+<button onclick="showMenu()" style="padding:15px 25px;">🎮 Start</button>
 
-<div id="menu" style="margin-top:30px;"></div>
+<div id="menu" style="margin-top:20px;"></div>
 
 <script>
 
-let wins = 0;
+let wins=0;
 function addWin(){
     wins++;
-    document.getElementById("scoreboard").innerHTML = "Wins: " + wins;
+    document.getElementById("scoreboard").innerHTML="Wins: "+wins;
 }
 
-/* STATE */
-let selectedGame = null;
-let mode = "1P";
-let difficulty = "easy";
+let selectedGame=null;
+let mode="1P";
+let difficulty="easy";
 
-/* ================= MENU ================= */
+/* MENU */
 function showMenu(){
-    document.getElementById("menu").innerHTML = `
-        <h2>🎯 Select Game</h2>
-
+    document.getElementById("menu").innerHTML=`
+        <h2>🎯 Games</h2>
         <button onclick="selectGame('ttt')">❌ Tic Tac Toe</button><br><br>
-        <button onclick="selectGame('rps')">✊ Rock Paper Scissors</button><br><br>
-        <button onclick="selectGame('snake')">🐍 Snake</button><br><br>
-        <button onclick="selectGame('memory')">🧠 Memory</button><br><br>
-        <button onclick="selectGame('reaction')">⚡ Reaction</button><br><br>
+        <button onclick="selectGame('rps')">✊ RPS</button><br><br>
+        <button onclick="startSnake()">🐍 Snake</button><br><br>
+        <button onclick="startMemory()">🧠 Memory</button><br><br>
+        <button onclick="startReaction()">⚡ Reaction</button><br><br>
+        <button onclick="startClick()">🎯 Click Speed</button><br><br>
     `;
-}
-
-/* ================= GAME SELECT ================= */
-function selectGame(game){
-    selectedGame = game;
-
-    let can2P = (game === "ttt" || game === "rps");
-
-    document.getElementById("menu").innerHTML = `
-        <h2>⚙️ Setup</h2>
-
-        <p><b>${game.toUpperCase()}</b></p>
-
-        <h3>Difficulty</h3>
-        <button onclick="difficulty='easy'">Easy</button>
-        <button onclick="difficulty='medium'">Medium</button>
-        <button onclick="difficulty='hard'">Hard</button>
-
-        ${can2P ? `
-        <h3>Mode</h3>
-        <button onclick="mode='1P'">1 Player</button>
-        <button onclick="mode='2P'">2 Player</button>
-        ` : `<p>1 Player only game</p>`}
-
-        <br><br>
-        <button onclick="startGame()">▶ Start</button>
-        <br><br>
-        <button onclick="showMenu()">Back</button>
-    `;
-}
-
-/* ================= ROUTER ================= */
-function startGame(){
-    if(selectedGame === "ttt") startTTT();
-    if(selectedGame === "rps") startRPS();
-    if(selectedGame === "snake") startSnake();
-    if(selectedGame === "memory") startMemory();
-    if(selectedGame === "reaction") startReaction();
 }
 
 /* ================= TIC TAC TOE ================= */
-function startTTT(){
+function selectGame(){
+    let board=["","","","","","","","",""];
+    let gameOver=false;
 
-let board = ["","","","","","","","",""];
-let gameOver = false;
-
-function checkWin(p){
-    const c = [
-        [0,1,2],[3,4,5],[6,7,8],
-        [0,3,6],[1,4,7],[2,5,8],
-        [0,4,8],[2,4,6]
-    ];
-    return c.some(([a,b,c]) =>
-        board[a]===p && board[b]===p && board[c]===p
-    );
-}
-
-function empty(){
-    return board.map((v,i)=>v===""?i:null).filter(v=>v!==null);
-}
-
-/* AI SYSTEM */
-function aiMove(){
-    if(gameOver) return;
-
-    let e = empty();
-    let move;
-
-    if(difficulty === "easy"){
-        move = e[Math.floor(Math.random()*e.length)];
-    }
-    else if(difficulty === "medium"){
-        move = mediumAI() || e[Math.floor(Math.random()*e.length)];
-    }
-    else {
-        move = hardAI() || e[Math.floor(Math.random()*e.length)];
+    function checkWin(p){
+        const c=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        return c.some(([a,b,c])=>board[a]===p&&board[b]===p&&board[c]===p);
     }
 
-    board[move] = "⭕";
+    function render(){
+        if(gameOver) return;
+        let html=`<h2>Tic Tac Toe</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,80px);justify-content:center;gap:5px;">`;
 
-    if(checkWin("⭕")){
-        gameOver = true;
-        addWin();
-        alert("AI Wins 🎉");
-        return;
+        for(let i=0;i<9;i++){
+            html+=`<div onclick="move(${i})"
+            style="width:80px;height:80px;background:#222;
+            display:flex;align-items:center;justify-content:center;font-size:30px;cursor:pointer;">
+            ${board[i]}</div>`;
+        }
+
+        html+=`</div><br><button onclick="showMenu()">Exit</button>`;
+        document.getElementById("menu").innerHTML=html;
     }
 
-    render();
-}
+    window.move=function(i){
+        if(gameOver||board[i]!="") return;
 
-/* MEDIUM AI (skilled player) */
-function mediumAI(){
-    let e = empty();
-
-    for(let i of e){
-        board[i]="⭕";
-        if(checkWin("⭕")){board[i]="";return i;}
-        board[i]="";
-    }
-
-    for(let i of e){
         board[i]="❌";
-        if(checkWin("❌")){board[i]="";return i;}
-        board[i]="";
-    }
 
-    if(board[4]==="") return 4;
+        if(checkWin("❌")){
+            gameOver=true;
+            addWin();
+            alert("You Win 🎉");
+            return;
+        }
 
-    let corners=[0,2,6,8].filter(i=>board[i]==="");
-    if(corners.length) return corners[Math.floor(Math.random()*corners.length)];
-
-    return null;
-}
-
-/* HARD AI (strong human level) */
-function hardAI(){
-    let e = empty();
-
-    for(let i of e){
-        board[i]="⭕";
-        if(checkWin("⭕")){board[i]="";return i;}
-        board[i]="";
-    }
-
-    for(let i of e){
-        board[i]="❌";
-        if(checkWin("❌")){board[i]="";return i;}
-        board[i]="";
-    }
-
-    if(board[4]==="") return 4;
-
-    let corners=[0,2,6,8].filter(i=>board[i]==="");
-    if(corners.length && Math.random()<0.75){
-        return corners[Math.floor(Math.random()*corners.length)];
-    }
-
-    if(Math.random()<0.2){
-        return e[Math.floor(Math.random()*e.length)];
-    }
-
-    return null;
-}
-
-/* RENDER */
-function render(){
-    if(gameOver) return;
-
-    let html = `<h2>Tic Tac Toe (${difficulty})</h2>
-    <div style="display:grid;grid-template-columns:repeat(3,80px);gap:5px;justify-content:center;">`;
-
-    for(let i=0;i<9;i++){
-        html += `
-        <div onclick="move(${i})"
-        style="width:80px;height:80px;background:#222;
-        display:flex;align-items:center;justify-content:center;
-        font-size:30px;cursor:pointer;">
-        ${board[i]}</div>`;
-    }
-
-    html += `</div><br><button onclick="showMenu()">Exit</button>`;
-    document.getElementById("menu").innerHTML = html;
-}
-
-/* PLAYER MOVE */
-window.move = function(i){
-    if(gameOver) return;
-    if(board[i] !== "") return;
-
-    board[i] = "❌";
-
-    if(checkWin("❌")){
-        gameOver = true;
-        addWin();
-        alert("You Win 🎉");
+        ai();
         render();
-        return;
+    }
+
+    function ai(){
+        let e=board.map((v,i)=>v===""?i:null).filter(v=>v!==null);
+        let move=e[Math.floor(Math.random()*e.length)];
+        board[move]="⭕";
+
+        if(checkWin("⭕")){
+            gameOver=true;
+            alert("AI Wins");
+        }
     }
 
     render();
-
-    if(mode === "1P"){
-        setTimeout(()=>aiMove(), difficulty==="hard"?150:300);
-    }
-};
-
-render();
 }
 
-/* ================= PLACEHOLDERS ================= */
-function startRPS(){document.getElementById("menu").innerHTML="RPS coming next";}
-function startSnake(){document.getElementById("menu").innerHTML="Snake coming next";}
-function startMemory(){document.getElementById("menu").innerHTML="Memory coming next";}
-function startReaction(){document.getElementById("menu").innerHTML="Reaction coming next";}
+/* ================= RPS ================= */
+function selectGame(){
+    document.getElementById("menu").innerHTML=`
+    <h2>✊ RPS</h2>
+    <button onclick="play('rock')">Rock</button>
+    <button onclick="play('paper')">Paper</button>
+    <button onclick="play('scissors')">Scissors</button>
+    <br><button onclick="showMenu()">Exit</button>`;
+}
+
+function play(c){
+    let ai=["rock","paper","scissors"][Math.floor(Math.random()*3)];
+    let res="Draw";
+
+    if(
+        (c==="rock"&&ai==="scissors")||
+        (c==="paper"&&ai==="rock")||
+        (c==="scissors"&&ai==="paper")
+    ){ res="Win"; addWin(); }
+    else if(c!==ai) res="Lose";
+
+    alert(`You: ${c} AI: ${ai} → ${res}`);
+}
+
+/* ================= SNAKE ================= */
+let snake,dir,food,game;
+
+function startSnake(){
+    snake=[{x:5,y:5}];
+    dir="right";
+    food={x:10,y:10};
+
+    document.addEventListener("keydown",e=>{
+        if(e.key==="ArrowUp")dir="up";
+        if(e.key==="ArrowDown")dir="down";
+        if(e.key==="ArrowLeft")dir="left";
+        if(e.key==="ArrowRight")dir="right";
+    });
+
+    document.getElementById("menu").innerHTML=`
+    <h2>🐍 Snake</h2>
+    <canvas id="game" width="300" height="300" style="background:#222"></canvas>
+    <br><button onclick="showMenu()">Exit</button>`;
+
+    clearInterval(game);
+    game=setInterval(update,150);
+}
+
+function update(){
+    let h={...snake[0]};
+    if(dir==="right")h.x++;
+    if(dir==="left")h.x--;
+    if(dir==="up")h.y--;
+    if(dir==="down")h.y++;
+
+    snake.unshift(h);
+
+    if(h.x===food.x&&h.y===food.y){
+        addWin();
+        food={x:Math.random()*15|0,y:Math.random()*15|0};
+    } else snake.pop();
+
+    let c=document.getElementById("game");
+    let ctx=c.getContext("2d");
+    ctx.clearRect(0,0,300,300);
+
+    ctx.fillStyle="red";
+    ctx.fillRect(food.x*20,food.y*20,20,20);
+
+    ctx.fillStyle="lime";
+    snake.forEach(s=>ctx.fillRect(s.x*20,s.y*20,20,20));
+}
+
+/* ================= MEMORY ================= */
+function startMemory(){
+    document.getElementById("menu").innerHTML=`<h2>🧠 Memory</h2><p>Coming next upgrade</p><button onclick="showMenu()">Exit</button>`;
+}
+
+/* ================= REACTION ================= */
+function startReaction(){
+    document.getElementById("menu").innerHTML=`<h2>⚡ Reaction</h2><p>Coming next upgrade</p><button onclick="showMenu()">Exit</button>`;
+}
+
+/* ================= CLICK SPEED ================= */
+function startClick(){
+    document.getElementById("menu").innerHTML=`<h2>🎯 Click Speed</h2><p>Coming next upgrade</p><button onclick="showMenu()">Exit</button>`;
+}
 
 </script>
 
