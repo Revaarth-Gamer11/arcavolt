@@ -7,7 +7,7 @@
 <body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
 <h1>⚡ Arcavolt Game Hub</h1>
-<p>Memory Game FIXED VERSION 🧠</p>
+<p>All Games Restored 🎮</p>
 
 <button onclick="showMenu()" style="padding:15px 25px; font-size:18px;">
 🎮 Open Game Menu
@@ -17,15 +17,173 @@
 
 <script>
 
+/* ================= MENU ================= */
 function showMenu() {
     document.getElementById("menu").innerHTML = `
-        <h2>🎯 Games</h2>
-        <button onclick="startMemory()">🧠 Memory Game</button>
+        <h2>🎯 Choose a Game</h2>
+
+        <button onclick="startTTT()">❌ Tic Tac Toe</button><br><br>
+        <button onclick="startRPS()">✊ Rock Paper Scissors</button><br><br>
+        <button onclick="startSnake()">🐍 Snake</button><br><br>
+        <button onclick="startMemory()">🧠 Memory Game</button><br><br>
     `;
 }
 
-/* ================= MEMORY GAME (REBUILT PROPERLY) ================= */
+/* ================= TIC TAC TOE ================= */
+let board = [];
+let current = "❌";
 
+function startTTT() {
+    board = ["","","","","","","","",""];
+    current = "❌";
+
+    function render() {
+        let html = `<h2>Tic Tac Toe</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,80px);
+        gap:5px;justify-content:center;">`;
+
+        for (let i = 0; i < 9; i++) {
+            let color = board[i] === "❌" ? "red" : "blue";
+
+            html += `
+            <div onclick="move(${i})"
+            style="width:80px;height:80px;background:#222;color:${color};
+            display:flex;align-items:center;justify-content:center;
+            font-size:30px;cursor:pointer;">
+            ${board[i]}
+            </div>`;
+        }
+
+        html += `</div><br><button onclick="showMenu()">Back</button>`;
+        document.getElementById("menu").innerHTML = html;
+    }
+
+    window.move = function(i) {
+        if (board[i] !== "") return;
+
+        board[i] = current;
+
+        const wins = [
+            [0,1,2],[3,4,5],[6,7,8],
+            [0,3,6],[1,4,7],[2,5,8],
+            [0,4,8],[2,4,6]
+        ];
+
+        for (let w of wins) {
+            let [a,b,c] = w;
+            if (board[a] && board[a] === board[b] && board[b] === board[c]) {
+                setTimeout(() => alert(current + " Wins 🎉"), 100);
+                return;
+            }
+        }
+
+        current = current === "❌" ? "⭕" : "❌";
+        render();
+    }
+
+    render();
+}
+
+/* ================= RPS ================= */
+function startRPS() {
+    document.getElementById("menu").innerHTML = `
+        <h2>✊ Rock Paper Scissors</h2>
+
+        <button onclick="play('rock')">🪨 Rock</button>
+        <button onclick="play('paper')">📄 Paper</button>
+        <button onclick="play('scissors')">✂ Scissors</button>
+
+        <h3 id="result"></h3>
+
+        <br><button onclick="showMenu()">Back</button>
+    `;
+}
+
+function play(choice) {
+    const ai = ["rock","paper","scissors"][Math.floor(Math.random()*3)];
+
+    let result = "";
+
+    if (choice === ai) result = "Draw 🤝";
+    else if (
+        (choice==="rock" && ai==="scissors") ||
+        (choice==="paper" && ai==="rock") ||
+        (choice==="scissors" && ai==="paper")
+    ) result = "You Win 🎉";
+    else result = "AI Wins 🤖";
+
+    document.getElementById("result").innerHTML =
+        `You: ${choice} | AI: ${ai} → ${result}`;
+}
+
+/* ================= SNAKE ================= */
+let snake, dir, food, game;
+
+function startSnake() {
+    snake = [{x:5,y:5}];
+    dir = "right";
+    food = {x:10,y:10};
+
+    document.getElementById("menu").innerHTML = `
+        <h2>🐍 Snake Game</h2>
+        <canvas id="game" width="300" height="300"
+        style="background:#222;"></canvas>
+        <br><button onclick="showMenu()">Back</button>
+    `;
+
+    document.addEventListener("keydown", changeDir);
+
+    clearInterval(game);
+    game = setInterval(updateSnake, 200);
+}
+
+function changeDir(e) {
+    if (e.key === "ArrowUp") dir = "up";
+    if (e.key === "ArrowDown") dir = "down";
+    if (e.key === "ArrowLeft") dir = "left";
+    if (e.key === "ArrowRight") dir = "right";
+}
+
+function updateSnake() {
+    let head = {...snake[0]};
+
+    if (dir === "right") head.x++;
+    if (dir === "left") head.x--;
+    if (dir === "up") head.y--;
+    if (dir === "down") head.y++;
+
+    if (head.x < 0 || head.y < 0 || head.x > 14 || head.y > 14) {
+        clearInterval(game);
+        alert("Game Over 💀");
+        showMenu();
+        return;
+    }
+
+    snake.unshift(head);
+
+    if (head.x === food.x && head.y === food.y) {
+        food = {x:Math.floor(Math.random()*15), y:Math.floor(Math.random()*15)};
+    } else {
+        snake.pop();
+    }
+
+    drawSnake();
+}
+
+function drawSnake() {
+    let c = document.getElementById("game");
+    let ctx = c.getContext("2d");
+
+    ctx.clearRect(0,0,300,300);
+
+    ctx.fillStyle = "red";
+    ctx.fillRect(food.x*20, food.y*20, 20, 20);
+
+    ctx.fillStyle = "lime";
+    snake.forEach(s => ctx.fillRect(s.x*20, s.y*20, 20, 20));
+}
+
+/* ================= MEMORY GAME ================= */
 function startMemory() {
     const emojis = ["🍎","🍌","🍇","🍓","🍍","🥝"];
     let cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
@@ -33,59 +191,50 @@ function startMemory() {
     let first = null;
     let lock = false;
 
-    const menu = document.getElementById("menu");
+    let html = `<h2>🧠 Memory Game</h2>
+    <div style="display:grid;grid-template-columns:repeat(4,70px);
+    gap:5px;justify-content:center;">`;
 
-    menu.innerHTML = `
-        <h2>🧠 Memory Game</h2>
-        <div id="grid" style="display:grid;grid-template-columns:repeat(4,70px);
-        gap:5px;justify-content:center;"></div>
-        <br><button onclick="showMenu()">Back</button>
-    `;
+    for (let i = 0; i < cards.length; i++) {
+        html += `
+        <div onclick="flip(${i})"
+        id="card${i}"
+        style="width:70px;height:70px;background:#222;
+        display:flex;align-items:center;justify-content:center;
+        font-size:25px;cursor:pointer;">
+        ❓
+        </div>`;
+    }
 
-    const grid = document.getElementById("grid");
+    html += `<br><button onclick="showMenu()">Back</button>`;
+    document.getElementById("menu").innerHTML = html;
 
-    // create cards properly (NO innerHTML click bugs)
-    cards.forEach((emoji, i) => {
-        const div = document.createElement("div");
+    window.flip = function(i) {
+        if (lock) return;
 
-        div.style.width = "70px";
-        div.style.height = "70px";
-        div.style.background = "#222";
-        div.style.display = "flex";
-        div.style.alignItems = "center";
-        div.style.justifyContent = "center";
-        div.style.fontSize = "25px";
-        div.style.cursor = "pointer";
+        let el = document.getElementById("card"+i);
+        if (el.innerHTML !== "❓") return;
 
-        div.innerHTML = "❓";
+        el.innerHTML = cards[i];
 
-        div.addEventListener("click", function () {
-            if (lock) return;
-            if (div.innerHTML !== "❓") return;
+        if (first === null) {
+            first = i;
+        } else {
+            lock = true;
 
-            div.innerHTML = emoji;
-
-            if (first === null) {
-                first = { index: i, element: div, emoji: emoji };
-            } else {
-                lock = true;
-
-                if (first.emoji !== emoji) {
-                    setTimeout(() => {
-                        first.element.innerHTML = "❓";
-                        div.innerHTML = "❓";
-                        first = null;
-                        lock = false;
-                    }, 700);
-                } else {
+            if (cards[first] !== cards[i]) {
+                setTimeout(() => {
+                    document.getElementById("card"+first).innerHTML = "❓";
+                    document.getElementById("card"+i).innerHTML = "❓";
                     first = null;
                     lock = false;
-                }
+                }, 700);
+            } else {
+                first = null;
+                lock = false;
             }
-        });
-
-        grid.appendChild(div);
-    });
+        }
+    }
 }
 
 </script>
