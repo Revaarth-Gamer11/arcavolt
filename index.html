@@ -7,7 +7,11 @@
 <body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
 <h1>⚡ Arcavolt Game Hub</h1>
-<p>All Games Restored 🎮</p>
+<p>Score System Added 🏆</p>
+
+<div id="scoreboard" style="margin:10px; font-size:18px;">
+Wins: 0
+</div>
 
 <button onclick="showMenu()" style="padding:15px 25px; font-size:18px;">
 🎮 Open Game Menu
@@ -16,6 +20,14 @@
 <div id="menu" style="margin-top:30px;"></div>
 
 <script>
+
+/* ================= SCORE SYSTEM ================= */
+let wins = 0;
+
+function addWin() {
+    wins++;
+    document.getElementById("scoreboard").innerHTML = `Wins: ${wins}`;
+}
 
 /* ================= MENU ================= */
 function showMenu() {
@@ -63,16 +75,17 @@ function startTTT() {
 
         board[i] = current;
 
-        const wins = [
+        const winsCombo = [
             [0,1,2],[3,4,5],[6,7,8],
             [0,3,6],[1,4,7],[2,5,8],
             [0,4,8],[2,4,6]
         ];
 
-        for (let w of wins) {
+        for (let w of winsCombo) {
             let [a,b,c] = w;
             if (board[a] && board[a] === board[b] && board[b] === board[c]) {
-                setTimeout(() => alert(current + " Wins 🎉"), 100);
+                addWin();
+                setTimeout(() => alert(current + " Wins 🎉 +1 Win"), 100);
                 return;
             }
         }
@@ -109,7 +122,10 @@ function play(choice) {
         (choice==="rock" && ai==="scissors") ||
         (choice==="paper" && ai==="rock") ||
         (choice==="scissors" && ai==="paper")
-    ) result = "You Win 🎉";
+    ) {
+        result = "You Win 🎉";
+        addWin();
+    }
     else result = "AI Wins 🤖";
 
     document.getElementById("result").innerHTML =
@@ -162,6 +178,7 @@ function updateSnake() {
     snake.unshift(head);
 
     if (head.x === food.x && head.y === food.y) {
+        addWin();
         food = {x:Math.floor(Math.random()*15), y:Math.floor(Math.random()*15)};
     } else {
         snake.pop();
@@ -230,6 +247,7 @@ function startMemory() {
                     lock = false;
                 }, 700);
             } else {
+                addWin();
                 first = null;
                 lock = false;
             }
