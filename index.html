@@ -7,7 +7,7 @@
 <body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
 <h1>⚡ Arcavolt Game Hub</h1>
-<p>Reaction Test Added ⚡</p>
+<p>Mini Arcade System</p>
 
 <div id="scoreboard" style="margin:10px; font-size:18px;">
 Wins: 0
@@ -21,7 +21,9 @@ Wins: 0
 
 <script>
 
+/* ================= CORE ================= */
 let wins = 0;
+
 function addWin() {
     wins++;
     document.getElementById("scoreboard").innerHTML = "Wins: " + wins;
@@ -37,6 +39,7 @@ function showMenu() {
         <button onclick="startSnake()">🐍 Snake</button><br><br>
         <button onclick="startMemory()">🧠 Memory Game</button><br><br>
         <button onclick="startReaction()">⚡ Reaction Test</button><br><br>
+        <button onclick="startClickSpeed()">🎯 Click Speed Game</button><br><br>
     `;
 }
 
@@ -146,6 +149,7 @@ function startSnake() {
         <br><button onclick="showMenu()">Back</button>
     `;
 
+    document.removeEventListener("keydown", changeDir);
     document.addEventListener("keydown", changeDir);
 
     clearInterval(game);
@@ -259,7 +263,7 @@ function startMemory() {
     });
 }
 
-/* ================= REACTION GAME ================= */
+/* ================= REACTION TEST ================= */
 function startReaction() {
     let startTime = 0;
     let timeout;
@@ -285,15 +289,13 @@ function startReaction() {
         let reaction = Date.now() - startTime;
 
         box.innerHTML = reaction + " ms";
-
         addWin();
 
         clearTimeout(timeout);
-
         setTimeout(startReaction, 1000);
     };
 
-    function startReaction() {
+    function startReactionLoop() {
         box.style.background = "red";
         box.innerHTML = "WAIT...";
 
@@ -306,7 +308,57 @@ function startReaction() {
         }, delay);
     }
 
-    startReaction();
+    startReactionLoop();
+}
+
+/* ================= CLICK SPEED GAME (NEW) ================= */
+function startClickSpeed() {
+    let clicks = 0;
+    let timeLeft = 5;
+
+    document.getElementById("menu").innerHTML = `
+        <h2>🎯 Click Speed Game</h2>
+
+        <p>Click as fast as you can in 5 seconds!</p>
+
+        <div id="box" style="width:200px;height:200px;
+        margin:auto;background:#333;
+        display:flex;align-items:center;justify-content:center;
+        font-size:22px;cursor:pointer;">
+        START
+        </div>
+
+        <h3 id="info"></h3>
+
+        <br><button onclick="showMenu()">Back</button>
+    `;
+
+    let box = document.getElementById("box");
+    let info = document.getElementById("info");
+
+    box.onclick = function () {
+        if (timeLeft === 5) {
+            startGame();
+        }
+        if (timeLeft > 0) clicks++;
+    };
+
+    function startGame() {
+        let timer = setInterval(() => {
+            timeLeft--;
+            info.innerHTML = `Time: ${timeLeft} | Clicks: ${clicks}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+
+                box.innerHTML = "Score: " + clicks;
+
+                if (clicks >= 25) addWin();
+
+                setTimeout(showMenu, 2000);
+            }
+        }, 1000);
+    }
 }
 
 </script>
