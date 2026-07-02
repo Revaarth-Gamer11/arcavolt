@@ -4,17 +4,81 @@
     <title>Arcavolt</title>
 </head>
 
-<body style="text-align:center; font-family:Arial; background:#0f0f1a; color:white;">
+<body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
-<h1>⚡ Arcavolt</h1>
-<p>If you can see this, your site is fixed ✅</p>
+<h1>⚡ Arcavolt Game Hub</h1>
+<p>Safe base version (stable + ready to build games)</p>
 
-<button onclick="document.getElementById('menu').innerHTML='Menu Works ✅'"
-style="padding:15px 25px; font-size:18px;">
-Open Menu
+<button onclick="showMenu()"
+style="padding:15px 25px; font-size:18px; cursor:pointer;">
+🎮 Open Game Menu
 </button>
 
-<div id="menu" style="margin-top:20px;"></div>
+<div id="menu" style="margin-top:30px;"></div>
+
+<script>
+function showMenu() {
+    document.getElementById("menu").innerHTML = `
+        <h2>🎯 Games Menu</h2>
+
+        <button onclick="startTTT()">❌ Tic Tac Toe</button><br><br>
+        <button onclick="startRPS()">✊ Rock Paper Scissors</button><br><br>
+        <button onclick="startSnake()">🐍 Snake (safe version)</button><br><br>
+
+        <p style="margin-top:20px;">More games coming soon 🚀</p>
+    `;
+}
+
+/* ---------------- SAFE TIC TAC TOE PLACEHOLDER */
+function startTTT() {
+    document.getElementById("menu").innerHTML = `
+        <h2>❌ Tic Tac Toe</h2>
+        <p>Next step: we will rebuild this properly</p>
+        <button onclick="showMenu()">Back</button>
+    `;
+}
+
+/* ---------------- SAFE RPS PLACEHOLDER */
+function startRPS() {
+    document.getElementById("menu").innerHTML = `
+        <h2>✊ Rock Paper Scissors</h2>
+
+        <button onclick="play('rock')">🪨 Rock</button>
+        <button onclick="play('paper')">📄 Paper</button>
+        <button onclick="play('scissors')">✂ Scissors</button>
+
+        <h3 id="result"></h3>
+
+        <br><button onclick="showMenu()">Back</button>
+    `;
+}
+
+function play(choice) {
+    const ai = ["rock","paper","scissors"][Math.floor(Math.random()*3)];
+
+    let result = "";
+
+    if (choice === ai) result = "Draw 🤝";
+    else if (
+        (choice==="rock" && ai==="scissors") ||
+        (choice==="paper" && ai==="rock") ||
+        (choice==="scissors" && ai==="paper")
+    ) result = "You Win 🎉";
+    else result = "AI Wins 🤖";
+
+    document.getElementById("result").innerHTML =
+        `You: ${choice} | AI: ${ai} → ${result}`;
+}
+
+/* ---------------- SAFE SNAKE PLACEHOLDER */
+function startSnake() {
+    document.getElementById("menu").innerHTML = `
+        <h2>🐍 Snake</h2>
+        <p>We will build real Snake next step (safe version first)</p>
+        <button onclick="showMenu()">Back</button>
+    `;
+}
+</script>
 
 </body>
 </html>
