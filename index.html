@@ -6,55 +6,85 @@
 
 <body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
-    <div style="padding:25px;">
+    <div style="padding:20px;">
         <h1>⚡ Arcavolt Game Hub</h1>
-        <p>20 Mini Games (Mobile + Laptop Compatible)</p>
+        <p>Now featuring REAL Tic Tac Toe 🎮</p>
     </div>
 
-    <button onclick="showGames()"
-        style="padding:15px 30px; font-size:18px; cursor:pointer;">
+    <button onclick="showGames()" style="padding:15px 30px; font-size:18px;">
         🎮 Open Game Menu
     </button>
 
     <div id="menu" style="margin-top:30px;"></div>
 
     <script>
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "❌";
+        let gameActive = false;
+
         function showGames() {
             document.getElementById("menu").innerHTML = `
                 <h2>🎯 Choose a Game</h2>
 
-                <button onclick="startGame('tictactoe')">❌ Tic Tac Toe (1P/2P)</button><br><br>
-                <button onclick="startGame('rps')">✊ Rock Paper Scissors (1P/2P)</button><br><br>
-                <button onclick="startGame('snake')">🐍 Snake (1P)</button><br><br>
-                <button onclick="startGame('memory')">🧠 Memory Game</button><br><br>
-                <button onclick="startGame('guess')">🔢 Guess Number</button><br><br>
+                <button onclick="startTicTacToe()">❌ Tic Tac Toe (2P)</button><br><br>
 
-                <button onclick="startGame('click')">👆 Click Speed Test</button><br><br>
-                <button onclick="startGame('reaction')">⚡ Reaction Test</button><br><br>
-                <button onclick="startGame('quiz')">❓ Quiz Game</button><br><br>
-                <button onclick="startGame('math')">➗ Math Challenge</button><br><br>
-                <button onclick="startGame('word')">🔤 Word Scramble</button><br><br>
-
-                <button onclick="startGame('maze')">🧩 Maze Game</button><br><br>
-                <button onclick="startGame('pong')">🏓 Pong (2P)</button><br><br>
-                <button onclick="startGame('flappy')">🐦 Flappy Style Game</button><br><br>
-                <button onclick="startGame('car')">🚗 Racing Game</button><br><br>
-                <button onclick="startGame('platform')">🕹 Platformer</button><br><br>
-
-                <button onclick="startGame('sudoku')">🔢 Sudoku</button><br><br>
-                <button onclick="startGame('chess')">♟ Chess (2P)</button><br><br>
-                <button onclick="startGame('memorycards')">🃏 Card Flip Memory</button><br><br>
-                <button onclick="startGame('typing')">⌨ Typing Test</button><br><br>
-                <button onclick="startGame('idle')">📈 Idle Clicker</button><br><br>
-
-                <p style="margin-top:20px;">More coming soon 🚀</p>
+                <button onclick="alert('More games coming soon')">✊ Rock Paper Scissors</button><br><br>
+                <button onclick="alert('More games coming soon')">🐍 Snake</button><br><br>
+                <button onclick="alert('More games coming soon')">🧠 Memory Game</button><br><br>
             `;
         }
 
-        function startGame(game) {
+        function startTicTacToe() {
+            board = ["", "", "", "", "", "", "", "", ""];
+            currentPlayer = "❌";
+            gameActive = true;
 
-            alert("Game selected: " + game + " 🚧 (We will build this next one by one)");
+            renderBoard();
+        }
 
+        function renderBoard() {
+            let html = "<h2>Tic Tac Toe</h2><div style='display:grid; grid-template-columns:repeat(3,80px); gap:5px; justify-content:center;'>";
+
+            for (let i = 0; i < 9; i++) {
+                html += `<div onclick="makeMove(${i})"
+                style="width:80px; height:80px; background:#222; display:flex; align-items:center; justify-content:center; font-size:30px; cursor:pointer;">
+                ${board[i]}
+                </div>`;
+            }
+
+            html += "</div><br><button onclick='showGames()'>Back to Menu</button>";
+
+            document.getElementById("menu").innerHTML = html;
+        }
+
+        function makeMove(index) {
+            if (!gameActive || board[index] !== "") return;
+
+            board[index] = currentPlayer;
+
+            if (checkWin()) {
+                gameActive = false;
+                renderBoard();
+                document.getElementById("menu").innerHTML += `<h3>${currentPlayer} Wins! 🎉</h3>`;
+                return;
+            }
+
+            currentPlayer = currentPlayer === "❌" ? "⭕" : "❌";
+            renderBoard();
+        }
+
+        function checkWin() {
+            const wins = [
+                [0,1,2],[3,4,5],[6,7,8],
+                [0,3,6],[1,4,7],[2,5,8],
+                [0,4,8],[2,4,6]
+            ];
+
+            return wins.some(combo => {
+                return board[combo[0]] &&
+                       board[combo[0]] === board[combo[1]] &&
+                       board[combo[1]] === board[combo[2]];
+            });
         }
     </script>
 
