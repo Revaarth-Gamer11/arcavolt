@@ -4,57 +4,17 @@
     <title>Arcavolt</title>
 </head>
 
-<body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
+<body style="text-align:center; font-family:Arial; background:#0f0f1a; color:white;">
 
-<h1>⚡ Arcavolt Game Hub</h1>
-<p>Fixing version (stable build)</p>
+<h1>⚡ Arcavolt</h1>
+<p>If you can see this, your site is fixed ✅</p>
 
-<button onclick="showGames()" style="padding:15px 30px; font-size:18px;">
-🎮 Open Game Menu
+<button onclick="document.getElementById('menu').innerHTML='Menu Works ✅'"
+style="padding:15px 25px; font-size:18px;">
+Open Menu
 </button>
 
-<div id="menu" style="margin-top:30px;"></div>
-
-<script>
-function showGames() {
-    document.getElementById("menu").innerHTML = `
-        <h2>🎯 Games (Stable Mode)</h2>
-
-        <button onclick="startTTT()">❌ Tic Tac Toe</button><br><br>
-        <button onclick="startRPS()">✊ Rock Paper Scissors</button><br><br>
-        <button onclick="startSnake()">🐍 Snake (basic)</button><br><br>
-    `;
-}
-
-/* SAFE TIC TAC TOE */
-function startTTT() {
-    document.getElementById("menu").innerHTML = `
-        <h2>Tic Tac Toe</h2>
-        <p>Working version placeholder</p>
-        <button onclick="showGames()">Back</button>
-    `;
-}
-
-/* SAFE RPS */
-function startRPS() {
-    document.getElementById("menu").innerHTML = `
-        <h2>RPS</h2>
-        <button onclick="alert('Rock')">Rock</button>
-        <button onclick="alert('Paper')">Paper</button>
-        <button onclick="alert('Scissors')">Scissors</button>
-        <br><br><button onclick="showGames()">Back</button>
-    `;
-}
-
-/* SAFE SNAKE (no crash version) */
-function startSnake() {
-    document.getElementById("menu").innerHTML = `
-        <h2>🐍 Snake</h2>
-        <p>We will rebuild Snake properly next step</p>
-        <button onclick="showGames()">Back</button>
-    `;
-}
-</script>
+<div id="menu" style="margin-top:20px;"></div>
 
 </body>
 </html>
