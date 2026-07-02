@@ -6,74 +6,37 @@
 
 <body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
-    <!-- HEADER -->
     <div style="padding:30px;">
         <h1>⚡ Arcavolt Game Hub</h1>
         <p>Mini games that work on Mac, Windows, Android, and iOS</p>
     </div>
 
-    <!-- MAIN BUTTON -->
     <button onclick="showGames()"
         style="padding:15px 30px; font-size:18px; cursor:pointer;">
         🎮 Open Game Menu
     </button>
 
-    <!-- GAME AREA -->
     <div id="menu" style="margin-top:40px;"></div>
 
-    <!-- SCRIPT -->
     <script>
         function showGames() {
             document.getElementById("menu").innerHTML = `
                 <h2>🎯 Choose a Game</h2>
 
-                <button onclick="startGame('tictactoe')"
-                    style="padding:10px 20px; margin:10px;">
-                    ❌ Tic Tac Toe (1P / 2P)
-                </button><br>
-
-                <button onclick="startGame('rps')"
-                    style="padding:10px 20px; margin:10px;">
-                    ✊ Rock Paper Scissors (1P / 2P)
-                </button><br>
-
-                <button onclick="startGame('snake')"
-                    style="padding:10px 20px; margin:10px;">
-                    🐍 Snake (1P)
-                </button><br>
-
-                <button onclick="startGame('memory')"
-                    style="padding:10px 20px; margin:10px;">
-                    🧠 Memory Game (1P)
-                </button><br>
-
-                <button onclick="startGame('guess')"
-                    style="padding:10px 20px; margin:10px;">
-                    🔢 Guess the Number (1P)
-                </button><br>
-
-                <p style="margin-top:20px; font-size:14px;">
-                    More games coming soon 🚀
-                </p>
+                <button onclick="startGame('tictactoe')">❌ Tic Tac Toe (1P / 2P)</button><br><br>
+                <button onclick="startGame('rps')">✊ Rock Paper Scissors (1P / 2P)</button><br><br>
+                <button onclick="startGame('snake')">🐍 Snake (1P)</button><br><br>
+                <button onclick="startGame('memory')">🧠 Memory Game (1P)</button><br><br>
+                <button onclick="startGame('guess')">🔢 Guess the Number (1P)</button><br><br>
             `;
         }
 
         function startGame(game) {
-            if (game === 'tictactoe') {
-                alert("❌ Tic Tac Toe will be your first real playable game!");
-            }
-            if (game === 'rps') {
-                alert("✊ Rock Paper Scissors coming soon!");
-            }
-            if (game === 'snake') {
-                alert("🐍 Snake coming soon!");
-            }
-            if (game === 'memory') {
-                alert("🧠 Memory Game coming soon!");
-            }
-            if (game === 'guess') {
-                alert("🔢 Guess the Number coming soon!");
-            }
+            if (game === 'tictactoe') alert("Next: we will build REAL Tic Tac Toe");
+            if (game === 'rps') alert("Rock Paper Scissors coming soon");
+            if (game === 'snake') alert("Snake coming soon");
+            if (game === 'memory') alert("Memory game coming soon");
+            if (game === 'guess') alert("Guess the Number coming soon");
         }
     </script>
 
