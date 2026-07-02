@@ -1,41 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Arcavolt</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="margin:0;font-family:Arial;background:#0f0f1a;color:white;text-align:center;">
+
+<h1>⚡ Arcavolt Game Hub</h1>
+<p>Version 1.4 - Stable AI + Fixed Engine</p>
+
+<div id="scoreboard" style="margin:10px;font-size:18px;">
+Wins: 0
+</div>
+
+<button onclick="showMenu()" style="padding:15px 25px;font-size:18px;">
+🎮 Start
+</button>
+
+<div id="menu" style="margin-top:30px;"></div>
+
+<script>
+
+let wins = 0;
+function addWin(){
+    wins++;
+    document.getElementById("scoreboard").innerHTML = "Wins: " + wins;
+}
+
+/* STATE */
+let selectedGame = null;
+let mode = "1P";
+let difficulty = "easy";
+
+/* ================= MENU ================= */
+function showMenu(){
+    document.getElementById("menu").innerHTML = `
+        <h2>🎯 Select Game</h2>
+
+        <button onclick="selectGame('ttt')">❌ Tic Tac Toe</button><br><br>
+        <button onclick="selectGame('rps')">✊ Rock Paper Scissors</button><br><br>
+        <button onclick="selectGame('snake')">🐍 Snake</button><br><br>
+        <button onclick="selectGame('memory')">🧠 Memory</button><br><br>
+        <button onclick="selectGame('reaction')">⚡ Reaction</button><br><br>
+    `;
+}
+
+/* ================= GAME SELECT ================= */
+function selectGame(game){
+    selectedGame = game;
+
+    let can2P = (game === "ttt" || game === "rps");
+
+    document.getElementById("menu").innerHTML = `
+        <h2>⚙️ Setup</h2>
+
+        <p><b>${game.toUpperCase()}</b></p>
+
+        <h3>Difficulty</h3>
+        <button onclick="difficulty='easy'">Easy</button>
+        <button onclick="difficulty='medium'">Medium</button>
+        <button onclick="difficulty='hard'">Hard</button>
+
+        ${can2P ? `
+        <h3>Mode</h3>
+        <button onclick="mode='1P'">1 Player</button>
+        <button onclick="mode='2P'">2 Player</button>
+        ` : `<p>1 Player only game</p>`}
+
+        <br><br>
+        <button onclick="startGame()">▶ Start</button>
+        <br><br>
+        <button onclick="showMenu()">Back</button>
+    `;
+}
+
+/* ================= ROUTER ================= */
+function startGame(){
+    if(selectedGame === "ttt") startTTT();
+    if(selectedGame === "rps") startRPS();
+    if(selectedGame === "snake") startSnake();
+    if(selectedGame === "memory") startMemory();
+    if(selectedGame === "reaction") startReaction();
+}
+
+/* ================= TIC TAC TOE ================= */
 function startTTT(){
 
-let board=["","","","","","","","",""];
-let gameOver=false;
+let board = ["","","","","","","","",""];
+let gameOver = false;
 
 function checkWin(p){
-    const c=[
+    const c = [
         [0,1,2],[3,4,5],[6,7,8],
         [0,3,6],[1,4,7],[2,5,8],
         [0,4,8],[2,4,6]
     ];
-    return c.some(([a,b,c])=>board[a]===p&&board[b]===p&&board[c]===p);
+    return c.some(([a,b,c]) =>
+        board[a]===p && board[b]===p && board[c]===p
+    );
 }
 
 function empty(){
     return board.map((v,i)=>v===""?i:null).filter(v=>v!==null);
 }
 
-/* ================= AI LEVELS ================= */
+/* AI SYSTEM */
 function aiMove(){
     if(gameOver) return;
 
     let e = empty();
     let move;
 
-    // 🟢 EASY = beginner (random, lots of mistakes)
     if(difficulty === "easy"){
-        move = e[Math.floor(Math.random() * e.length)];
+        move = e[Math.floor(Math.random()*e.length)];
     }
-
-    // 🟡 MEDIUM = skilled human (blocks + basic strategy)
     else if(difficulty === "medium"){
-        move = mediumAI() || e[Math.floor(Math.random() * e.length)];
+        move = mediumAI() || e[Math.floor(Math.random()*e.length)];
     }
-
-    // 🔴 HARD = very strong human (almost perfect but not unfair)
     else {
-        move = hardAI() || e[Math.floor(Math.random() * e.length)];
+        move = hardAI() || e[Math.floor(Math.random()*e.length)];
     }
 
     board[move] = "⭕";
@@ -44,83 +128,75 @@ function aiMove(){
         gameOver = true;
         addWin();
         alert("AI Wins 🎉");
+        return;
     }
 
     render();
 }
 
-/* 🟡 MEDIUM AI (skilled player) */
+/* MEDIUM AI (skilled player) */
 function mediumAI(){
     let e = empty();
 
-    // win if possible
     for(let i of e){
         board[i]="⭕";
         if(checkWin("⭕")){board[i]="";return i;}
         board[i]="";
     }
 
-    // block player win
     for(let i of e){
         board[i]="❌";
         if(checkWin("❌")){board[i]="";return i;}
         board[i]="";
     }
 
-    // take center if free
     if(board[4]==="") return 4;
 
-    // take random corner
-    let corners = [0,2,6,8].filter(i=>board[i]==="");
+    let corners=[0,2,6,8].filter(i=>board[i]==="");
     if(corners.length) return corners[Math.floor(Math.random()*corners.length)];
 
     return null;
 }
 
-/* 🔴 HARD AI (strong human level, NOT perfect) */
+/* HARD AI (strong human level) */
 function hardAI(){
     let e = empty();
 
-    // win immediately
     for(let i of e){
         board[i]="⭕";
         if(checkWin("⭕")){board[i]="";return i;}
         board[i]="";
     }
 
-    // block player win
     for(let i of e){
         board[i]="❌";
         if(checkWin("❌")){board[i]="";return i;}
         board[i]="";
     }
 
-    // prioritize center
     if(board[4]==="") return 4;
 
-    // prioritize corners
     let corners=[0,2,6,8].filter(i=>board[i]==="");
-    if(corners.length && Math.random()<0.8){
+    if(corners.length && Math.random()<0.75){
         return corners[Math.floor(Math.random()*corners.length)];
     }
 
-    // sometimes make human-like mistake
-    if(Math.random()<0.15){
+    if(Math.random()<0.2){
         return e[Math.floor(Math.random()*e.length)];
     }
 
     return null;
 }
 
-/* ================= RENDER ================= */
+/* RENDER */
 function render(){
     if(gameOver) return;
 
-    let html=`<h2>Tic Tac Toe (${difficulty})</h2>
+    let html = `<h2>Tic Tac Toe (${difficulty})</h2>
     <div style="display:grid;grid-template-columns:repeat(3,80px);gap:5px;justify-content:center;">`;
 
     for(let i=0;i<9;i++){
-        html+=`
+        html += `
         <div onclick="move(${i})"
         style="width:80px;height:80px;background:#222;
         display:flex;align-items:center;justify-content:center;
@@ -128,19 +204,19 @@ function render(){
         ${board[i]}</div>`;
     }
 
-    html+=`</div><br><button onclick="showMenu()">Exit</button>`;
-    document.getElementById("menu").innerHTML=html;
+    html += `</div><br><button onclick="showMenu()">Exit</button>`;
+    document.getElementById("menu").innerHTML = html;
 }
 
-/* ================= PLAYER MOVE ================= */
-window.move=function(i){
+/* PLAYER MOVE */
+window.move = function(i){
     if(gameOver) return;
-    if(board[i]!=="") return;
+    if(board[i] !== "") return;
 
-    board[i]="❌";
+    board[i] = "❌";
 
     if(checkWin("❌")){
-        gameOver=true;
+        gameOver = true;
         addWin();
         alert("You Win 🎉");
         render();
@@ -149,10 +225,21 @@ window.move=function(i){
 
     render();
 
-    if(mode==="1P"){
-        setTimeout(()=>aiMove(),difficulty==="hard"?150:350);
+    if(mode === "1P"){
+        setTimeout(()=>aiMove(), difficulty==="hard"?150:300);
     }
 };
 
 render();
 }
+
+/* ================= PLACEHOLDERS ================= */
+function startRPS(){document.getElementById("menu").innerHTML="RPS coming next";}
+function startSnake(){document.getElementById("menu").innerHTML="Snake coming next";}
+function startMemory(){document.getElementById("menu").innerHTML="Memory coming next";}
+function startReaction(){document.getElementById("menu").innerHTML="Reaction coming next";}
+
+</script>
+
+</body>
+</html>
