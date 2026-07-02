@@ -4,36 +4,76 @@
     <title>Arcavolt</title>
 </head>
 
-<body style="text-align:center; font-family:Arial; background:#0f0f1a; color:white;">
+<body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
-    <h1>⚡ Arcavolt</h1>
-    <p>Welcome to the mini games hub!</p>
+    <!-- HEADER -->
+    <div style="padding:30px;">
+        <h1>⚡ Arcavolt Game Hub</h1>
+        <p>Mini games that work on Mac, Windows, Android, and iOS</p>
+    </div>
 
-    <!-- Play Button -->
+    <!-- MAIN BUTTON -->
     <button onclick="showGames()"
-        style="padding:12px 25px; font-size:18px; cursor:pointer; margin-top:20px;">
-        🎮 Play Games
+        style="padding:15px 30px; font-size:18px; cursor:pointer;">
+        🎮 Open Game Menu
     </button>
 
-    <!-- Game Menu Appears Here -->
-    <div id="menu" style="margin-top:30px;"></div>
+    <!-- GAME AREA -->
+    <div id="menu" style="margin-top:40px;"></div>
 
-    <!-- JavaScript -->
+    <!-- SCRIPT -->
     <script>
         function showGames() {
             document.getElementById("menu").innerHTML = `
-                <h2>Choose a Game</h2>
+                <h2>🎯 Choose a Game</h2>
 
-                <button onclick="alert('Tic Tac Toe coming soon!')"
-                    style="padding:10px 20px; margin:10px; cursor:pointer;">
-                    ❌ Tic Tac Toe
-                </button>
+                <button onclick="startGame('tictactoe')"
+                    style="padding:10px 20px; margin:10px;">
+                    ❌ Tic Tac Toe (1P / 2P)
+                </button><br>
 
-                <button onclick="alert('Snake coming soon!')"
-                    style="padding:10px 20px; margin:10px; cursor:pointer;">
-                    🐍 Snake
-                </button>
+                <button onclick="startGame('rps')"
+                    style="padding:10px 20px; margin:10px;">
+                    ✊ Rock Paper Scissors (1P / 2P)
+                </button><br>
+
+                <button onclick="startGame('snake')"
+                    style="padding:10px 20px; margin:10px;">
+                    🐍 Snake (1P)
+                </button><br>
+
+                <button onclick="startGame('memory')"
+                    style="padding:10px 20px; margin:10px;">
+                    🧠 Memory Game (1P)
+                </button><br>
+
+                <button onclick="startGame('guess')"
+                    style="padding:10px 20px; margin:10px;">
+                    🔢 Guess the Number (1P)
+                </button><br>
+
+                <p style="margin-top:20px; font-size:14px;">
+                    More games coming soon 🚀
+                </p>
             `;
+        }
+
+        function startGame(game) {
+            if (game === 'tictactoe') {
+                alert("❌ Tic Tac Toe will be your first real playable game!");
+            }
+            if (game === 'rps') {
+                alert("✊ Rock Paper Scissors coming soon!");
+            }
+            if (game === 'snake') {
+                alert("🐍 Snake coming soon!");
+            }
+            if (game === 'memory') {
+                alert("🧠 Memory Game coming soon!");
+            }
+            if (game === 'guess') {
+                alert("🔢 Guess the Number coming soon!");
+            }
         }
     </script>
 
