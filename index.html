@@ -2,76 +2,94 @@
 <html>
 <head>
     <title>Arcavolt</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
 <h1>⚡ Arcavolt Game Hub</h1>
-<p>Mini Arcade System</p>
+<p>Game Engine v1 (Mode System Enabled)</p>
 
 <div id="scoreboard" style="margin:10px; font-size:18px;">
 Wins: 0
 </div>
 
 <button onclick="showMenu()" style="padding:15px 25px; font-size:18px;">
-🎮 Open Game Menu
+🎮 Start
 </button>
 
 <div id="menu" style="margin-top:30px;"></div>
-
-<!-- POPUP SYSTEM -->
-<div id="popup" style="
-position:fixed;
-bottom:20px;
-left:50%;
-transform:translateX(-50%);
-background:#222;
-color:white;
-padding:12px 20px;
-border-radius:10px;
-font-size:16px;
-display:none;
-z-index:9999;
-"></div>
 
 <script>
 
 /* ================= CORE ================= */
 let wins = 0;
 
-function showPopup(text) {
-    let popup = document.getElementById("popup");
-    popup.innerHTML = text;
-    popup.style.display = "block";
-
-    setTimeout(() => {
-        popup.style.display = "none";
-    }, 2000);
-}
-
 function addWin() {
     wins++;
     document.getElementById("scoreboard").innerHTML = "Wins: " + wins;
-
-    showPopup("🏆 +1 Win!");
-
-    if (wins % 5 === 0) {
-        showPopup("⚡ Milestone: " + wins + " Wins!");
-    }
 }
 
-/* ================= MENU ================= */
+/* ================= ENGINE STATE ================= */
+let selectedGame = null;
+let mode = "1P";
+let difficulty = "easy";
+
+/* ================= MAIN MENU ================= */
 function showMenu() {
     document.getElementById("menu").innerHTML = `
-        <h2>🎯 Choose a Game</h2>
+        <h2>🎯 Select Game</h2>
 
-        <button onclick="startTTT()">❌ Tic Tac Toe</button><br><br>
-        <button onclick="startRPS()">✊ Rock Paper Scissors</button><br><br>
-        <button onclick="startSnake()">🐍 Snake</button><br><br>
-        <button onclick="startMemory()">🧠 Memory Game</button><br><br>
-        <button onclick="startReaction()">⚡ Reaction Test</button><br><br>
-        <button onclick="startClickSpeed()">🎯 Click Speed Game</button><br><br>
+        <button onclick="selectGame('ttt')">❌ Tic Tac Toe</button><br><br>
+        <button onclick="selectGame('rps')">✊ Rock Paper Scissors</button><br><br>
+        <button onclick="selectGame('snake')">🐍 Snake</button><br><br>
+        <button onclick="selectGame('memory')">🧠 Memory Game</button><br><br>
+        <button onclick="selectGame('reaction')">⚡ Reaction Test</button><br><br>
+        <button onclick="selectGame('click')">🎯 Click Speed</button><br><br>
     `;
+}
+
+/* ================= GAME SELECT ================= */
+function selectGame(game) {
+    selectedGame = game;
+
+    document.getElementById("menu").innerHTML = `
+        <h2>⚙️ Configure Game</h2>
+
+        <p>Game: <b>${game.toUpperCase()}</b></p>
+
+        <h3>Mode</h3>
+        <button onclick="setMode('1P')">1 Player</button>
+        <button onclick="setMode('2P')">2 Player</button>
+
+        <h3>Difficulty (1P only)</h3>
+        <button onclick="setDifficulty('easy')">Easy</button>
+        <button onclick="setDifficulty('medium')">Medium</button>
+        <button onclick="setDifficulty('hard')">Hard</button>
+
+        <br><br>
+        <button onclick="startGame()">▶ Start Game</button>
+        <br><br>
+        <button onclick="showMenu()">Back</button>
+    `;
+}
+
+function setMode(m) {
+    mode = m;
+}
+
+function setDifficulty(d) {
+    difficulty = d;
+}
+
+/* ================= START GAME ROUTER ================= */
+function startGame() {
+    if (selectedGame === "ttt") startTTT();
+    if (selectedGame === "rps") startRPS();
+    if (selectedGame === "snake") startSnake();
+    if (selectedGame === "memory") startMemory();
+    if (selectedGame === "reaction") startReaction();
+    if (selectedGame === "click") startClickSpeed();
 }
 
 /* ================= TIC TAC TOE ================= */
@@ -83,23 +101,21 @@ function startTTT() {
     current = "❌";
 
     function render() {
-        let html = `<h2>Tic Tac Toe</h2>
+        let html = `<h2>Tic Tac Toe (${mode})</h2>
         <div style="display:grid;grid-template-columns:repeat(3,80px);
         gap:5px;justify-content:center;">`;
 
         for (let i = 0; i < 9; i++) {
-            let color = board[i] === "❌" ? "red" : "blue";
-
             html += `
             <div onclick="move(${i})"
-            style="width:80px;height:80px;background:#222;color:${color};
+            style="width:80px;height:80px;background:#222;
             display:flex;align-items:center;justify-content:center;
             font-size:30px;cursor:pointer;">
             ${board[i]}
             </div>`;
         }
 
-        html += `</div><br><button onclick="showMenu()">Back</button>`;
+        html += `</div><br><button onclick="showMenu()">Exit</button>`;
         document.getElementById("menu").innerHTML = html;
     }
 
@@ -108,24 +124,29 @@ function startTTT() {
 
         board[i] = current;
 
-        const winsCombo = [
+        const winCombo = [
             [0,1,2],[3,4,5],[6,7,8],
             [0,3,6],[1,4,7],[2,5,8],
             [0,4,8],[2,4,6]
         ];
 
-        for (let w of winsCombo) {
+        for (let w of winCombo) {
             let [a,b,c] = w;
             if (board[a] && board[a] === board[b] && board[b] === board[c]) {
                 addWin();
-                setTimeout(() => showPopup(current + " Wins 🎉"), 100);
+                alert(current + " Wins!");
                 return;
             }
         }
 
-        current = current === "❌" ? "⭕" : "❌";
+        if (mode === "1P") {
+            current = current === "❌" ? "⭕" : "❌";
+        } else {
+            current = current === "❌" ? "⭕" : "❌";
+        }
+
         render();
-    }
+    };
 
     render();
 }
@@ -133,15 +154,14 @@ function startTTT() {
 /* ================= RPS ================= */
 function startRPS() {
     document.getElementById("menu").innerHTML = `
-        <h2>✊ Rock Paper Scissors</h2>
+        <h2>✊ Rock Paper Scissors (${mode})</h2>
 
-        <button onclick="play('rock')">🪨 Rock</button>
-        <button onclick="play('paper')">📄 Paper</button>
-        <button onclick="play('scissors')">✂ Scissors</button>
+        <button onclick="play('rock')">Rock</button>
+        <button onclick="play('paper')">Paper</button>
+        <button onclick="play('scissors')">Scissors</button>
 
         <h3 id="result"></h3>
-
-        <br><button onclick="showMenu()">Back</button>
+        <br><button onclick="showMenu()">Exit</button>
     `;
 }
 
@@ -150,19 +170,18 @@ function play(choice) {
 
     let result = "";
 
-    if (choice === ai) result = "Draw 🤝";
+    if (choice === ai) result = "Draw";
     else if (
         (choice==="rock" && ai==="scissors") ||
         (choice==="paper" && ai==="rock") ||
         (choice==="scissors" && ai==="paper")
     ) {
-        result = "You Win 🎉";
+        result = "You Win";
         addWin();
-    }
-    else result = "AI Wins 🤖";
+    } else result = "AI Wins";
 
     document.getElementById("result").innerHTML =
-        "You: " + choice + " | AI: " + ai + " → " + result;
+        `${choice} vs ${ai} → ${result}`;
 }
 
 /* ================= SNAKE ================= */
@@ -173,118 +192,104 @@ function startSnake() {
     dir = "right";
     food = {x:10,y:10};
 
-    document.removeEventListener("keydown", changeDir);
     document.addEventListener("keydown", changeDir);
 
     document.getElementById("menu").innerHTML = `
-        <h2>🐍 Snake Game</h2>
-        <canvas id="game" width="300" height="300"
-        style="background:#222;"></canvas>
-        <br><button onclick="showMenu()">Back</button>
+        <h2>🐍 Snake (${difficulty})</h2>
+        <canvas id="game" width="300" height="300" style="background:#222;"></canvas>
+        <br><button onclick="showMenu()">Exit</button>
     `;
 
+    let speed = difficulty === "easy" ? 200 :
+                difficulty === "medium" ? 130 : 80;
+
     clearInterval(game);
-    game = setInterval(updateSnake, 200);
+    game = setInterval(updateSnake, speed);
 }
 
 function changeDir(e) {
-    if (e.key === "ArrowUp") dir = "up";
-    if (e.key === "ArrowDown") dir = "down";
-    if (e.key === "ArrowLeft") dir = "left";
-    if (e.key === "ArrowRight") dir = "right";
+    if (e.key==="ArrowUp") dir="up";
+    if (e.key==="ArrowDown") dir="down";
+    if (e.key==="ArrowLeft") dir="left";
+    if (e.key==="ArrowRight") dir="right";
 }
 
 function updateSnake() {
     let head = {...snake[0]};
 
-    if (dir === "right") head.x++;
-    if (dir === "left") head.x--;
-    if (dir === "up") head.y--;
-    if (dir === "down") head.y++;
+    if (dir==="right") head.x++;
+    if (dir==="left") head.x--;
+    if (dir==="up") head.y--;
+    if (dir==="down") head.y++;
 
-    if (head.x < 0 || head.y < 0 || head.x > 14 || head.y > 14) {
-        showPopup("💀 Game Over");
+    if (head.x<0||head.y<0||head.x>14||head.y>14) {
+        alert("Game Over");
         showMenu();
         return;
     }
 
     snake.unshift(head);
 
-    if (head.x === food.x && head.y === food.y) {
+    if (head.x===food.x && head.y===food.y) {
         addWin();
-        food = {x:Math.floor(Math.random()*15), y:Math.floor(Math.random()*15)};
-    } else {
-        snake.pop();
-    }
+        food = {x:Math.floor(Math.random()*15),y:Math.floor(Math.random()*15)};
+    } else snake.pop();
 
     drawSnake();
 }
 
 function drawSnake() {
-    let c = document.getElementById("game");
-    let ctx = c.getContext("2d");
+    let c=document.getElementById("game");
+    let ctx=c.getContext("2d");
 
     ctx.clearRect(0,0,300,300);
 
-    ctx.fillStyle = "red";
-    ctx.fillRect(food.x*20, food.y*20, 20, 20);
+    ctx.fillStyle="red";
+    ctx.fillRect(food.x*20,food.y*20,20,20);
 
-    ctx.fillStyle = "lime";
-    snake.forEach(s => ctx.fillRect(s.x*20, s.y*20, 20, 20));
+    ctx.fillStyle="lime";
+    snake.forEach(s=>ctx.fillRect(s.x*20,s.y*20,20,20));
 }
 
-/* ================= MEMORY GAME ================= */
+/* ================= MEMORY ================= */
 function startMemory() {
-    const emojis = ["🍎","🍌","🍇","🍓","🍍","🥝"];
-    let cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+    const emojis=["🍎","🍌","🍇","🍓","🍍","🥝"];
+    let cards=[...emojis,...emojis].sort(()=>Math.random()-0.5);
 
-    let first = null;
-    let lock = false;
+    let first=null, lock=false;
 
-    document.getElementById("menu").innerHTML = `
-        <h2>🧠 Memory Game</h2>
-        <div id="grid" style="display:grid;grid-template-columns:repeat(4,70px);
-        gap:5px;justify-content:center;"></div>
-        <br><button onclick="showMenu()">Back</button>
+    document.getElementById("menu").innerHTML=`
+        <h2>🧠 Memory (${difficulty})</h2>
+        <div id="grid" style="display:grid;grid-template-columns:repeat(4,70px);gap:5px;justify-content:center;"></div>
+        <br><button onclick="showMenu()">Exit</button>
     `;
 
-    let grid = document.getElementById("grid");
+    let grid=document.getElementById("grid");
 
-    cards.forEach((emoji) => {
-        let card = document.createElement("div");
+    cards.forEach(e=>{
+        let card=document.createElement("div");
+        card.style="width:70px;height:70px;background:#222;display:flex;align-items:center;justify-content:center;font-size:25px;cursor:pointer;";
+        card.innerHTML="❓";
 
-        card.style.width = "70px";
-        card.style.height = "70px";
-        card.style.background = "#222";
-        card.style.display = "flex";
-        card.style.alignItems = "center";
-        card.style.justifyContent = "center";
-        card.style.fontSize = "25px";
-        card.style.cursor = "pointer";
+        card.onclick=function(){
+            if(lock||card.innerHTML!=="❓")return;
 
-        card.innerHTML = "❓";
+            card.innerHTML=e;
 
-        card.onclick = function () {
-            if (lock || card.innerHTML !== "❓") return;
-
-            card.innerHTML = emoji;
-
-            if (!first) {
-                first = {card, emoji};
-            } else {
-                lock = true;
-
-                if (first.emoji !== emoji) {
-                    setTimeout(() => {
-                        first.card.innerHTML = "❓";
-                        card.innerHTML = "❓";
-                        first = null;
-                        lock = false;
-                    }, 700);
+            if(!first) first={card,e};
+            else{
+                lock=true;
+                if(first.e!==e){
+                    setTimeout(()=>{
+                        first.card.innerHTML="❓";
+                        card.innerHTML="❓";
+                        first=null;
+                        lock=false;
+                    },700);
                 } else {
                     addWin();
-                    first = null;
-                    lock = false;
+                    first=null;
+                    lock=false;
                 }
             }
         };
@@ -295,92 +300,72 @@ function startMemory() {
 
 /* ================= REACTION ================= */
 function startReaction() {
-    let startTime = 0;
-    let timeout;
+    let start=0, timeout;
 
-    document.getElementById("menu").innerHTML = `
-        <h2>⚡ Reaction Test</h2>
-
-        <div id="box" style="width:200px;height:200px;
-        margin:auto;background:red;
-        display:flex;align-items:center;justify-content:center;
-        font-size:20px;cursor:pointer;">
-        WAIT...
-        </div>
-
-        <br><button onclick="showMenu()">Back</button>
+    document.getElementById("menu").innerHTML=`
+        <h2>⚡ Reaction (${difficulty})</h2>
+        <div id="box" style="width:200px;height:200px;margin:auto;background:red;display:flex;align-items:center;justify-content:center;cursor:pointer;">WAIT</div>
+        <br><button onclick="showMenu()">Exit</button>
     `;
 
-    let box = document.getElementById("box");
+    let box=document.getElementById("box");
 
-    function startRound() {
-        box.style.background = "red";
-        box.innerHTML = "WAIT...";
+    function round(){
+        box.style.background="red";
+        box.innerHTML="WAIT";
 
-        timeout = setTimeout(() => {
-            box.style.background = "green";
-            box.innerHTML = "CLICK!";
-            startTime = Date.now();
-        }, Math.random()*3000 + 1000);
+        timeout=setTimeout(()=>{
+            box.style.background="green";
+            box.innerHTML="CLICK";
+            start=Date.now();
+        },Math.random()*3000+1000);
     }
 
-    box.onclick = function () {
-        if (box.innerHTML === "WAIT...") return;
+    box.onclick=function(){
+        if(box.innerHTML==="WAIT")return;
 
-        let reaction = Date.now() - startTime;
-        showPopup(reaction + " ms");
+        let reaction=Date.now()-start;
+        alert(reaction+" ms");
         addWin();
 
         clearTimeout(timeout);
-        setTimeout(startRound, 1000);
+        setTimeout(round,1000);
     };
 
-    startRound();
+    round();
 }
 
 /* ================= CLICK SPEED ================= */
 function startClickSpeed() {
-    let clicks = 0;
-    let timeLeft = 5;
+    let clicks=0,time=5;
 
-    document.getElementById("menu").innerHTML = `
-        <h2>🎯 Click Speed Game</h2>
-
-        <div id="box" style="width:200px;height:200px;
-        margin:auto;background:#333;
-        display:flex;align-items:center;justify-content:center;
-        font-size:22px;cursor:pointer;">
-        START
-        </div>
-
+    document.getElementById("menu").innerHTML=`
+        <h2>🎯 Click Speed</h2>
+        <div id="box" style="width:200px;height:200px;margin:auto;background:#333;display:flex;align-items:center;justify-content:center;cursor:pointer;">START</div>
         <h3 id="info"></h3>
-
-        <br><button onclick="showMenu()">Back</button>
+        <br><button onclick="showMenu()">Exit</button>
     `;
 
-    let box = document.getElementById("box");
-    let info = document.getElementById("info");
+    let box=document.getElementById("box");
+    let info=document.getElementById("info");
 
-    box.onclick = function () {
-        if (timeLeft === 5) startGame();
-        if (timeLeft > 0) clicks++;
+    box.onclick=function(){
+        if(time===5) start();
+        if(time>0) clicks++;
     };
 
-    function startGame() {
-        let timer = setInterval(() => {
-            timeLeft--;
-            info.innerHTML = `Time: ${timeLeft} | Clicks: ${clicks}`;
+    function start(){
+        let t=setInterval(()=>{
+            time--;
+            info.innerHTML=`Time: ${time} | Clicks: ${clicks}`;
 
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-
-                box.innerHTML = "Score: " + clicks;
-
-                if (clicks >= 25) addWin();
-
-                setTimeout(showMenu, 2000);
+            if(time<=0){
+                clearInterval(t);
+                box.innerHTML="Score: "+clicks;
+                if(clicks>=25) addWin();
+                setTimeout(showMenu,2000);
             }
-        }, 1000);
+        },1000);
     }
 }
 
