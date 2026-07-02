@@ -6,9 +6,9 @@
 
 <body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
-    <div style="padding:30px;">
+    <div style="padding:25px;">
         <h1>⚡ Arcavolt Game Hub</h1>
-        <p>Mini games that work on Mac, Windows, Android, and iOS</p>
+        <p>20 Mini Games (Mobile + Laptop Compatible)</p>
     </div>
 
     <button onclick="showGames()"
@@ -16,27 +16,45 @@
         🎮 Open Game Menu
     </button>
 
-    <div id="menu" style="margin-top:40px;"></div>
+    <div id="menu" style="margin-top:30px;"></div>
 
     <script>
         function showGames() {
             document.getElementById("menu").innerHTML = `
                 <h2>🎯 Choose a Game</h2>
 
-                <button onclick="startGame('tictactoe')">❌ Tic Tac Toe (1P / 2P)</button><br><br>
-                <button onclick="startGame('rps')">✊ Rock Paper Scissors (1P / 2P)</button><br><br>
+                <button onclick="startGame('tictactoe')">❌ Tic Tac Toe (1P/2P)</button><br><br>
+                <button onclick="startGame('rps')">✊ Rock Paper Scissors (1P/2P)</button><br><br>
                 <button onclick="startGame('snake')">🐍 Snake (1P)</button><br><br>
-                <button onclick="startGame('memory')">🧠 Memory Game (1P)</button><br><br>
-                <button onclick="startGame('guess')">🔢 Guess the Number (1P)</button><br><br>
+                <button onclick="startGame('memory')">🧠 Memory Game</button><br><br>
+                <button onclick="startGame('guess')">🔢 Guess Number</button><br><br>
+
+                <button onclick="startGame('click')">👆 Click Speed Test</button><br><br>
+                <button onclick="startGame('reaction')">⚡ Reaction Test</button><br><br>
+                <button onclick="startGame('quiz')">❓ Quiz Game</button><br><br>
+                <button onclick="startGame('math')">➗ Math Challenge</button><br><br>
+                <button onclick="startGame('word')">🔤 Word Scramble</button><br><br>
+
+                <button onclick="startGame('maze')">🧩 Maze Game</button><br><br>
+                <button onclick="startGame('pong')">🏓 Pong (2P)</button><br><br>
+                <button onclick="startGame('flappy')">🐦 Flappy Style Game</button><br><br>
+                <button onclick="startGame('car')">🚗 Racing Game</button><br><br>
+                <button onclick="startGame('platform')">🕹 Platformer</button><br><br>
+
+                <button onclick="startGame('sudoku')">🔢 Sudoku</button><br><br>
+                <button onclick="startGame('chess')">♟ Chess (2P)</button><br><br>
+                <button onclick="startGame('memorycards')">🃏 Card Flip Memory</button><br><br>
+                <button onclick="startGame('typing')">⌨ Typing Test</button><br><br>
+                <button onclick="startGame('idle')">📈 Idle Clicker</button><br><br>
+
+                <p style="margin-top:20px;">More coming soon 🚀</p>
             `;
         }
 
         function startGame(game) {
-            if (game === 'tictactoe') alert("Next: we will build REAL Tic Tac Toe");
-            if (game === 'rps') alert("Rock Paper Scissors coming soon");
-            if (game === 'snake') alert("Snake coming soon");
-            if (game === 'memory') alert("Memory game coming soon");
-            if (game === 'guess') alert("Guess the Number coming soon");
+
+            alert("Game selected: " + game + " 🚧 (We will build this next one by one)");
+
         }
     </script>
 
