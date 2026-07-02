@@ -7,7 +7,7 @@
 <body style="margin:0; font-family:Arial; background:#0f0f1a; color:white; text-align:center;">
 
 <h1>⚡ Arcavolt Game Hub</h1>
-<p>Snake Update Added 🐍</p>
+<p>Memory Game Update 🧠</p>
 
 <button onclick="showMenu()" style="padding:15px 25px; font-size:18px;">
 🎮 Open Game Menu
@@ -25,6 +25,7 @@ function showMenu() {
         <button onclick="startTTT()">❌ Tic Tac Toe</button><br><br>
         <button onclick="startRPS()">✊ Rock Paper Scissors</button><br><br>
         <button onclick="startSnake()">🐍 Snake</button><br><br>
+        <button onclick="startMemory()">🧠 Memory Game</button><br><br>
     `;
 }
 
@@ -35,9 +36,9 @@ let current = "❌";
 function startTTT() {
     board = ["","","","","","","","",""];
     current = "❌";
-    render();
+    renderTTT();
 
-    function render() {
+    function renderTTT() {
         let html = `<h2>Tic Tac Toe</h2>
         <div style="display:grid;grid-template-columns:repeat(3,80px);
         gap:5px;justify-content:center;">`;
@@ -46,7 +47,7 @@ function startTTT() {
             let color = board[i] === "❌" ? "red" : "blue";
 
             html += `
-            <div onclick="move(${i})"
+            <div onclick="moveTTT(${i})"
             style="width:80px;height:80px;background:#222;color:${color};
             display:flex;align-items:center;justify-content:center;
             font-size:30px;cursor:pointer;">
@@ -58,7 +59,7 @@ function startTTT() {
         document.getElementById("menu").innerHTML = html;
     }
 
-    window.move = function(i) {
+    window.moveTTT = function(i) {
         if (board[i] !== "") return;
 
         board[i] = current;
@@ -78,7 +79,7 @@ function startTTT() {
         }
 
         current = current === "❌" ? "⭕" : "❌";
-        render();
+        renderTTT();
     }
 }
 
@@ -124,7 +125,7 @@ function startSnake() {
 
     document.getElementById("menu").innerHTML = `
         <h2>🐍 Snake Game</h2>
-        <p>Use arrow keys ⬆️⬇️⬅️➡️</p>
+        <p>Use arrow keys</p>
 
         <canvas id="game" width="300" height="300"
         style="background:#222;"></canvas>
@@ -135,7 +136,7 @@ function startSnake() {
     document.addEventListener("keydown", changeDir);
 
     clearInterval(game);
-    game = setInterval(update, 200);
+    game = setInterval(updateSnake, 200);
 }
 
 function changeDir(e) {
@@ -145,7 +146,7 @@ function changeDir(e) {
     if (e.key === "ArrowRight") dir = "right";
 }
 
-function update() {
+function updateSnake() {
     let head = {...snake[0]};
 
     if (dir === "right") head.x++;
@@ -168,10 +169,10 @@ function update() {
         snake.pop();
     }
 
-    draw();
+    drawSnake();
 }
 
-function draw() {
+function drawSnake() {
     let c = document.getElementById("game");
     let ctx = c.getContext("2d");
 
@@ -182,6 +183,60 @@ function draw() {
 
     ctx.fillStyle = "lime";
     snake.forEach(s => ctx.fillRect(s.x*20, s.y*20, 20, 20));
+}
+
+/* ================= MEMORY GAME ================= */
+function startMemory() {
+    const emojis = ["🍎","🍌","🍇","🍓","🍍","🥝"];
+    let cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+
+    let first = null;
+    let lock = false;
+
+    let html = `<h2>🧠 Memory Game</h2>
+    <div style="display:grid;grid-template-columns:repeat(4,70px);
+    gap:5px;justify-content:center;">`;
+
+    cards.forEach((c, i) => {
+        html += `
+        <div onclick="flip(${i})"
+        id="c${i}"
+        style="width:70px;height:70px;background:#222;
+        display:flex;align-items:center;justify-content:center;
+        font-size:25px;cursor:pointer;">
+        ❓
+        </div>`;
+    });
+
+    html += `</div><br><button onclick="showMenu()">Back</button>`;
+    document.getElementById("menu").innerHTML = html;
+
+    window.flip = function(i) {
+        if (lock) return;
+
+        let el = document.getElementById("c"+i);
+        if (el.innerHTML !== "❓") return;
+
+        el.innerHTML = cards[i];
+
+        if (!first) {
+            first = i;
+        } else {
+            lock = true;
+
+            if (cards[first] !== cards[i]) {
+                setTimeout(() => {
+                    document.getElementById("c"+first).innerHTML = "❓";
+                    document.getElementById("c"+i).innerHTML = "❓";
+                    first = null;
+                    lock = false;
+                }, 800);
+            } else {
+                first = null;
+                lock = false;
+            }
+        }
+    }
 }
 
 </script>
