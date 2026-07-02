@@ -3,15 +3,39 @@
 <head>
     <title>Arcavolt</title>
 </head>
+
 <body style="text-align:center; font-family:Arial; background:#0f0f1a; color:white;">
 
     <h1>⚡ Arcavolt</h1>
     <p>Welcome to the mini games hub!</p>
 
-    <button onclick="alert('Games coming soon!')" 
-        style="padding:10px 20px; font-size:16px; cursor:pointer;">
+    <!-- Play Button -->
+    <button onclick="showGames()"
+        style="padding:12px 25px; font-size:18px; cursor:pointer; margin-top:20px;">
         🎮 Play Games
     </button>
+
+    <!-- Game Menu Appears Here -->
+    <div id="menu" style="margin-top:30px;"></div>
+
+    <!-- JavaScript -->
+    <script>
+        function showGames() {
+            document.getElementById("menu").innerHTML = `
+                <h2>Choose a Game</h2>
+
+                <button onclick="alert('Tic Tac Toe coming soon!')"
+                    style="padding:10px 20px; margin:10px; cursor:pointer;">
+                    ❌ Tic Tac Toe
+                </button>
+
+                <button onclick="alert('Snake coming soon!')"
+                    style="padding:10px 20px; margin:10px; cursor:pointer;">
+                    🐍 Snake
+                </button>
+            `;
+        }
+    </script>
 
 </body>
 </html>
