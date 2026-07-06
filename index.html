@@ -12,13 +12,10 @@
 
 <header>
     <h1>⚡ Arcavolt Game Hub</h1>
-    <p>Version 2.0</p>
 
     <div id="scoreboard">
         Wins: <span id="wins">0</span>
     </div>
-
-    <br>
 
     <button onclick="goHome()">🏠 Home</button>
 </header>
@@ -26,16 +23,24 @@
 <main id="app"></main>
 
 <!-- ========================
-     LOAD ORDER (IMPORTANT)
+     ENGINE FIRST
 ======================== -->
-
 <script src="engine.js"></script>
+
+<!-- MENU SECOND -->
 <script src="menu.js"></script>
+
+<!-- MAIN STARTUP -->
 <script src="main.js"></script>
 
-<!-- Games -->
+<!-- ========================
+     ALL GAMES (CRITICAL ORDER)
+======================== -->
 <script src="games/tictactoe.js"></script>
 <script src="games/rps.js"></script>
+<script src="games/snake.js"></script>
+<script src="games/memory.js"></script>
+<script src="games/reaction.js"></script>
 
 </body>
 </html>

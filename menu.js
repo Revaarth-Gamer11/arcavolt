@@ -1,13 +1,16 @@
 const games = [
-    { id: "tictactoe", icon: "❌" },
-    { id: "rps", icon: "✊" },
-    { id: "snake", icon: "🐍" },
-    { id: "memory", icon: "🧠" },
-    { id: "reaction", icon: "⚡" }
+    { id: "tictactoe", icon: "❌", name: "Tic Tac Toe" },
+    { id: "rps", icon: "✊", name: "Rock Paper Scissors" },
+    { id: "snake", icon: "🐍", name: "Snake" },
+    { id: "memory", icon: "🧠", name: "Memory" },
+    { id: "reaction", icon: "⚡", name: "Reaction" }
 ];
 
 let unlockedGames = 5;
 
+// ========================
+// MENU
+// ========================
 function showMenu(){
 
     const app = document.getElementById("app");
@@ -20,44 +23,76 @@ function showMenu(){
 
     for(let i = 0; i < games.length; i++){
 
+        const g = games[i];
+
         if(i < unlockedGames){
             html += `
-                <button onclick="openGame('${games[i].id}')">
-                    ${games[i].icon} Game ${i+1}
-                </button><br>
+                <button class="gameButton" onclick="openGame('${g.id}')">
+                    ${g.icon} ${g.name}
+                </button>
+                <br>
             `;
         } else {
-            html += `<button disabled>🔒 Locked</button><br>`;
+            html += `
+                <button class="gameButton" disabled>
+                    🔒 Locked
+                </button>
+                <br>
+            `;
         }
     }
 
     app.innerHTML = html;
 }
 
-// IMPORTANT: force global access
+// ========================
+// OPEN GAME (FIXED GLOBAL)
+// ========================
 window.openGame = function(id){
 
-    console.log("Clicked game:", id);
+    console.log("openGame clicked:", id);
 
-    switch(id){
+    if(id === "tictactoe"){
+        if(typeof startTicTacToe === "function"){
+            startTicTacToe();
+        } else {
+            alert("❌ Tic Tac Toe not loaded");
+        }
+    }
 
-        case "tictactoe":
-            if(typeof startTicTacToe === "function"){
-                startTicTacToe();
-            } else {
-                alert("Tic Tac Toe not loaded");
-            }
-            break;
+    else if(id === "rps"){
+        if(typeof startRPS === "function"){
+            startRPS();
+        } else {
+            alert("❌ RPS not loaded");
+        }
+    }
 
-        case "rps":
-            if(typeof startRPS === "function"){
-                startRPS();
-            } else {
-                alert("RPS not loaded");
-            }
-            break;
+    else if(id === "snake"){
+        if(typeof startSnake === "function"){
+            startSnake();
+        } else {
+            alert("❌ Snake not loaded");
+        }
+    }
 
-        default:
-            alert("Game not ready yet");
+    else if(id === "memory"){
+        if(typeof startMemory === "function"){
+            startMemory();
+        } else {
+            alert("❌ Memory not loaded");
+        }
+    }
+
+    else if(id === "reaction"){
+        if(typeof startReaction === "function"){
+            startReaction();
+        } else {
+            alert("❌ Reaction not loaded");
+        }
+    }
+
+    else {
+        alert("🚧 Game not ready");
     }
 };
