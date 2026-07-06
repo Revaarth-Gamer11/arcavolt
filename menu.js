@@ -1,50 +1,63 @@
 const games = [
-    { name: "Tic Tac Toe", icon: "❌" },
-    { name: "Rock Paper Scissors", icon: "✊" },
-    { name: "Snake", icon: "🐍" },
-    { name: "Memory", icon: "🧠" },
-    { name: "Reaction", icon: "⚡" },
-    { name: "Click Speed", icon: "🎯" },
-    { name: "Whack A Mole", icon: "🔨" },
-    { name: "Connect Four", icon: "🟡" },
-    { name: "Pong", icon: "🏓" },
-    { name: "Breakout", icon: "🧱" },
-    { name: "2048", icon: "🔢" },
-    { name: "Minesweeper", icon: "💣" },
-    { name: "Simon Says", icon: "🎵" },
-    { name: "Hangman", icon: "🪢" },
-    { name: "Dots & Boxes", icon: "🔷" },
-    { name: "Space Shooter", icon: "🚀" },
-    { name: "Flappy Bird", icon: "🐦" },
-    { name: "Platform Runner", icon: "🏃" },
-    { name: "Maze Escape", icon: "🌀" },
-    { name: "Colour Match", icon: "🎨" }
+    { id: "tictactoe", icon: "❌" },
+    { id: "rps", icon: "✊" },
+    { id: "snake", icon: "🐍" },
+    { id: "memory", icon: "🧠" },
+    { id: "reaction", icon: "⚡" }
 ];
 
 let unlockedGames = 5;
 
-/* SHOW MENU */
 function showMenu(){
+
     const app = document.getElementById("app");
 
-    let html = `<h2>🎮 Game Menu</h2><p>Select a game</p><br>`;
+    let html = `
+        <h2>🎮 Arcavolt</h2>
+        <p>Unlocked ${unlockedGames}/${games.length}</p>
+        <br>
+    `;
 
     for(let i = 0; i < games.length; i++){
 
         if(i < unlockedGames){
             html += `
-                <button class="gameButton" onclick="openGame(${i})">
-                    ${games[i].icon} ${games[i].name}
+                <button onclick="openGame('${games[i].id}')">
+                    ${games[i].icon} Game ${i+1}
                 </button><br>
             `;
         } else {
-            html += `
-                <button class="gameButton" disabled>
-                    🔒 ${games[i].name}
-                </button><br>
-            `;
+            html += `<button disabled>🔒 Locked</button><br>`;
         }
     }
 
     app.innerHTML = html;
 }
+
+// IMPORTANT: force global access
+window.openGame = function(id){
+
+    console.log("Clicked game:", id);
+
+    switch(id){
+
+        case "tictactoe":
+            if(typeof startTicTacToe === "function"){
+                startTicTacToe();
+            } else {
+                alert("Tic Tac Toe not loaded");
+            }
+            break;
+
+        case "rps":
+            if(typeof startRPS === "function"){
+                startRPS();
+            } else {
+                alert("RPS not loaded");
+            }
+            break;
+
+        default:
+            alert("Game not ready yet");
+    }
+};
