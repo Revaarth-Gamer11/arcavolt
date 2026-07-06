@@ -1,191 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Arcavolt</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcavolt</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
 
-<body style="margin:0;font-family:Arial;background:#0f0f1a;color:white;text-align:center;">
+<body>
 
-<h1>⚡ Arcavolt Game Hub</h1>
-<p>Version 1.5 - All Games Working</p>
+<header>
+    <h1>⚡ Arcavolt Game Hub</h1>
+    <p>Version 2.0</p>
 
-<div id="scoreboard" style="margin:10px;font-size:18px;">Wins: 0</div>
+    <div id="scoreboard">
+        Wins: <span id="wins">0</span>
+    </div>
 
-<button onclick="showMenu()" style="padding:15px 25px;">🎮 Start</button>
+    <br>
 
-<div id="menu" style="margin-top:20px;"></div>
+    <button id="homeButton">🏠 Home</button>
+</header>
 
-<script>
+<main id="app"></main>
 
-let wins=0;
-function addWin(){
-    wins++;
-    document.getElementById("scoreboard").innerHTML="Wins: "+wins;
-}
+<script src="engine.js"></script>
+<script src="menu.js"></script>
+<script src="main.js"></script>
 
-let selectedGame=null;
-let mode="1P";
-let difficulty="easy";
-
-/* MENU */
-function showMenu(){
-    document.getElementById("menu").innerHTML=`
-        <h2>🎯 Games</h2>
-        <button onclick="selectGame('ttt')">❌ Tic Tac Toe</button><br><br>
-        <button onclick="selectGame('rps')">✊ RPS</button><br><br>
-        <button onclick="startSnake()">🐍 Snake</button><br><br>
-        <button onclick="startMemory()">🧠 Memory</button><br><br>
-        <button onclick="startReaction()">⚡ Reaction</button><br><br>
-        <button onclick="startClick()">🎯 Click Speed</button><br><br>
-    `;
-}
-
-/* ================= TIC TAC TOE ================= */
-function selectGame(){
-    let board=["","","","","","","","",""];
-    let gameOver=false;
-
-    function checkWin(p){
-        const c=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-        return c.some(([a,b,c])=>board[a]===p&&board[b]===p&&board[c]===p);
-    }
-
-    function render(){
-        if(gameOver) return;
-        let html=`<h2>Tic Tac Toe</h2>
-        <div style="display:grid;grid-template-columns:repeat(3,80px);justify-content:center;gap:5px;">`;
-
-        for(let i=0;i<9;i++){
-            html+=`<div onclick="move(${i})"
-            style="width:80px;height:80px;background:#222;
-            display:flex;align-items:center;justify-content:center;font-size:30px;cursor:pointer;">
-            ${board[i]}</div>`;
-        }
-
-        html+=`</div><br><button onclick="showMenu()">Exit</button>`;
-        document.getElementById("menu").innerHTML=html;
-    }
-
-    window.move=function(i){
-        if(gameOver||board[i]!="") return;
-
-        board[i]="❌";
-
-        if(checkWin("❌")){
-            gameOver=true;
-            addWin();
-            alert("You Win 🎉");
-            return;
-        }
-
-        ai();
-        render();
-    }
-
-    function ai(){
-        let e=board.map((v,i)=>v===""?i:null).filter(v=>v!==null);
-        let move=e[Math.floor(Math.random()*e.length)];
-        board[move]="⭕";
-
-        if(checkWin("⭕")){
-            gameOver=true;
-            alert("AI Wins");
-        }
-    }
-
-    render();
-}
-
-/* ================= RPS ================= */
-function selectGame(){
-    document.getElementById("menu").innerHTML=`
-    <h2>✊ RPS</h2>
-    <button onclick="play('rock')">Rock</button>
-    <button onclick="play('paper')">Paper</button>
-    <button onclick="play('scissors')">Scissors</button>
-    <br><button onclick="showMenu()">Exit</button>`;
-}
-
-function play(c){
-    let ai=["rock","paper","scissors"][Math.floor(Math.random()*3)];
-    let res="Draw";
-
-    if(
-        (c==="rock"&&ai==="scissors")||
-        (c==="paper"&&ai==="rock")||
-        (c==="scissors"&&ai==="paper")
-    ){ res="Win"; addWin(); }
-    else if(c!==ai) res="Lose";
-
-    alert(`You: ${c} AI: ${ai} → ${res}`);
-}
-
-/* ================= SNAKE ================= */
-let snake,dir,food,game;
-
-function startSnake(){
-    snake=[{x:5,y:5}];
-    dir="right";
-    food={x:10,y:10};
-
-    document.addEventListener("keydown",e=>{
-        if(e.key==="ArrowUp")dir="up";
-        if(e.key==="ArrowDown")dir="down";
-        if(e.key==="ArrowLeft")dir="left";
-        if(e.key==="ArrowRight")dir="right";
-    });
-
-    document.getElementById("menu").innerHTML=`
-    <h2>🐍 Snake</h2>
-    <canvas id="game" width="300" height="300" style="background:#222"></canvas>
-    <br><button onclick="showMenu()">Exit</button>`;
-
-    clearInterval(game);
-    game=setInterval(update,150);
-}
-
-function update(){
-    let h={...snake[0]};
-    if(dir==="right")h.x++;
-    if(dir==="left")h.x--;
-    if(dir==="up")h.y--;
-    if(dir==="down")h.y++;
-
-    snake.unshift(h);
-
-    if(h.x===food.x&&h.y===food.y){
-        addWin();
-        food={x:Math.random()*15|0,y:Math.random()*15|0};
-    } else snake.pop();
-
-    let c=document.getElementById("game");
-    let ctx=c.getContext("2d");
-    ctx.clearRect(0,0,300,300);
-
-    ctx.fillStyle="red";
-    ctx.fillRect(food.x*20,food.y*20,20,20);
-
-    ctx.fillStyle="lime";
-    snake.forEach(s=>ctx.fillRect(s.x*20,s.y*20,20,20));
-}
-
-/* ================= MEMORY ================= */
-function startMemory(){
-    document.getElementById("menu").innerHTML=`<h2>🧠 Memory</h2><p>Coming next upgrade</p><button onclick="showMenu()">Exit</button>`;
-}
-
-/* ================= REACTION ================= */
-function startReaction(){
-    document.getElementById("menu").innerHTML=`<h2>⚡ Reaction</h2><p>Coming next upgrade</p><button onclick="showMenu()">Exit</button>`;
-}
-
-/* ================= CLICK SPEED ================= */
-function startClick(){
-    document.getElementById("menu").innerHTML=`<h2>🎯 Click Speed</h2><p>Coming next upgrade</p><button onclick="showMenu()">Exit</button>`;
-}
-
-</script>
+<script src="games/tictactoe.js"></script>
+<script src="games/rps.js"></script>
 
 </body>
 </html>
