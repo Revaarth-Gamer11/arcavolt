@@ -1,13 +1,14 @@
 function startTicTacToe(){
-    alert("Tic Tac Toe started");
 
     const app = document.getElementById("app");
 
     let board = ["","","","","","","","",""];
     let gameOver = false;
+    let difficulty = "easy";
 
-    let difficulty = "easy"; // easy / medium / hard
-
+    // ========================
+    // CHECK WIN
+    // ========================
     function checkWin(p){
         const winPatterns = [
             [0,1,2],[3,4,5],[6,7,8],
@@ -26,6 +27,9 @@ function startTicTacToe(){
         return board.map((v,i)=>v===""?i:null).filter(v=>v!==null);
     }
 
+    // ========================
+    // RENDER
+    // ========================
     function render(){
 
         let html = `
@@ -51,12 +55,15 @@ function startTicTacToe(){
         html += `
             </div>
             <br>
-            <button onclick="showMenu()">⬅ Exit</button>
+            <button onclick="goHome()">⬅ Exit</button>
         `;
 
         app.innerHTML = html;
     }
 
+    // ========================
+    // AI
+    // ========================
     function aiMove(){
 
         if(gameOver) return;
@@ -64,27 +71,14 @@ function startTicTacToe(){
         let moves = empty();
         let move;
 
-        // EASY = random
         if(difficulty === "easy"){
             move = moves[Math.floor(Math.random() * moves.length)];
         }
-
-        // MEDIUM = block + win sometimes
         else if(difficulty === "medium"){
-
-            move = findWinningMove("⭕")
-                || findWinningMove("❌")
-                || moves[Math.floor(Math.random() * moves.length)];
+            move = findWin("⭕") || findWin("❌") || randomMove();
         }
-
-        // HARD = strong human-like AI (not perfect)
         else{
-
-            move =
-                findWinningMove("⭕") ||
-                findWinningMove("❌") ||
-                centerOrCorner() ||
-                moves[Math.floor(Math.random() * moves.length)];
+            move = findWin("⭕") || findWin("❌") || centerOrCorner() || randomMove();
         }
 
         board[move] = "⭕";
@@ -98,21 +92,17 @@ function startTicTacToe(){
         render();
     }
 
-    function findWinningMove(player){
-
+    function findWin(player){
         for(let i of empty()){
             board[i] = player;
             let win = checkWin(player);
             board[i] = "";
-
             if(win) return i;
         }
-
         return null;
     }
 
     function centerOrCorner(){
-
         if(board[4] === "") return 4;
 
         let corners = [0,2,6,8].filter(i => board[i] === "");
@@ -123,10 +113,18 @@ function startTicTacToe(){
         return null;
     }
 
+    function randomMove(){
+        let moves = empty();
+        return moves[Math.floor(Math.random() * moves.length)];
+    }
+
+    // ========================
+    // GLOBAL INPUT FUNCTIONS
+    // ========================
     window.setDiff = function(d){
         difficulty = d;
         render();
-    }
+    };
 
     window.move = function(i){
 
@@ -143,9 +141,11 @@ function startTicTacToe(){
         }
 
         render();
+        setTimeout(aiMove, 250);
+    };
 
-        setTimeout(aiMove, 300);
-    }
-
+    // ========================
+    // START
+    // ========================
     render();
 }
